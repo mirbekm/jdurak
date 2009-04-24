@@ -24,7 +24,7 @@ public class TableTest
 	private Durak durak;
 	private ArrayList<Player> players;
 	private Rules rules;
-	private final int SIZE_OF_DECK = 52;
+	private final int SIZE_OF_DECK = Rules.MAX_AMOUNT_OF_CARDS;
 
 	@Before
 	public void setUpBeforeClass()
