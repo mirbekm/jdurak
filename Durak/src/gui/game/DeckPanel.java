@@ -10,7 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -63,6 +63,7 @@ public class DeckPanel extends JPanel
 		this.add(panelGameInfo, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 		this.playerInfo = new JPanel(new GridBagLayout());
+
 		this.playerInfo.setBackground(Colors.LIGHT_GREEN);
 		this.playerInfo.setBorder(new LineBorder(Colors.DARK_GREEN, 1));
 
@@ -78,7 +79,7 @@ public class DeckPanel extends JPanel
 
 		stack.removeAll();
 
-		if (deck.remainingCards() > 1)
+		if (deck.getRemainingCards() > 1)
 			stack.add(backCard, 0);
 		else
 		{
@@ -99,19 +100,19 @@ public class DeckPanel extends JPanel
 		stack.repaint();
 	}
 
-	public void updateDisplay(Deck deck, ArrayList<Player> players)
+	public void updateDisplay(Deck deck, List<Player> players)
 	{
 		//TODO remove syso
-		System.out.println("tet " + deck + " " + players);
+		System.out.println("test " + deck + " " + players);
 		this.displayStack(deck);
-		this.cardsLeft.setText("" + deck.remainingCards());
+		this.cardsLeft.setText("" + deck.getRemainingCards());
 		this.trump.setText(CardManager.getSuitName(Deck.trumpSuit));
 
 		JLabel lblPlayerName = new JLabel("<html><b>name</b></html>");
 		JLabel lblRole = new JLabel("<html><b>role</b></html>");
 		JLabel lblPlayerCardsLeft = new JLabel("<html><b>cards</b></html>");
 
-		this.playerInfo.removeAll();
+		//		this.playerInfo.removeAll();
 
 		this.playerInfo.add(lblPlayerName, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
 		this.playerInfo.add(lblRole, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
@@ -131,7 +132,7 @@ public class DeckPanel extends JPanel
 		}
 
 		if (stack != null)
-			stack.setToolTipText(deck.remainingCards() + " cards left on stack.");
+			stack.setToolTipText(deck.getRemainingCards() + " cards left on stack.");
 
 		//		this.playerInfo.repaint();
 	}

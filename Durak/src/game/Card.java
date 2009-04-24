@@ -33,7 +33,7 @@ public class Card implements Comparable<Card>
 	 * @param suit
 	 *            Must be one of {@link #CLUBS}, {@link #DIAMONDS}, {@link #HEARTS} or {@link #SPADES}
 	 * @param number
-	 *            Must be greater than 1 and smaller than 15. The valid numbers are 2-10 and the jack is represented by 11, queen by 12, king by 13 and the ace is represented by 14
+	 *            Must be greater than 1 and smaller than 15. The valid numbers are 2-10, the jack is represented by 11, queen by 12, king by 13 and the ace is represented by 14
 	 */
 	public Card(int suit, int number)
 	{
@@ -157,7 +157,7 @@ public class Card implements Comparable<Card>
 			break;
 		}
 
-		return suitName + " - " + numberName;
+		return numberName + " of " + suitName;
 	}
 
 }

@@ -1,8 +1,11 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class Table
 {
@@ -36,6 +39,7 @@ public class Table
 		this.deck = new Deck(this.durak.getRules().getNumberOfCardsPerSuit());
 		this.activePlayer = this.players.get(0);
 
+		//TODO lowest trump to start
 		this.attackers.add(this.players.get(0));
 		this.players.get(0).setIsAttacker(true);
 
@@ -43,6 +47,9 @@ public class Table
 		this.players.get(1).setIsAttacker(false);
 
 		this.resetLists();
+
+		for (Player player : players)
+			player.newGame(this.deck);
 	}
 
 	private void resetLists()
@@ -54,22 +61,22 @@ public class Table
 		this.numbersOnTable = new HashSet<Integer>();
 	}
 
-	public ArrayList<Card> getCardsOfAttackerOneOnTable()
+	public List<Card> getCardsOfAttackerOneOnTable()
 	{
-		return this.cardsOfAttackerOneOnTable;
+		return Collections.unmodifiableList(this.cardsOfAttackerOneOnTable);
 	}
 
-	public ArrayList<Card> getCardsOnTableOfAttackerTwo()
+	public List<Card> getCardsOfAttackerTwoOnTable()
 	{
 		if (this.attackers.size() > 1)
-			return this.cardsOfAttackerTwoOnTable;
+			return Collections.unmodifiableList(this.cardsOfAttackerTwoOnTable);
 		else
 			return null;
 	}
 
-	public HashMap<Card, Card> getDefendedCards()
+	public Map<Card, Card> getDefendedCards()
 	{
-		return this.defendedCards;
+		return Collections.unmodifiableMap(this.defendedCards);
 	}
 
 	public void defend(Card cardToBeDefeated, Card cardDefendingWith)
@@ -96,6 +103,7 @@ public class Table
 		}
 	}
 
+	@Deprecated
 	public void attack(Card attackingCard)
 	{
 		assert (attackingCard != null);
@@ -132,6 +140,33 @@ public class Table
 		}
 	}
 
+	public void attack(Card attackingCard, AbstractPlayer attackingPlayer)
+	{
+		assert (attackingCard != null);
+		assert (attackingPlayer != null);
+
+		if (!this.attackers.contains(attackingPlayer))
+			// TODO attacking player is actually no attacking player!
+			throw new IllegalArgumentException(attackingPlayer + " is not an attacking player!");
+
+		if (this.numbersOnTable.isEmpty() || this.numbersOnTable.contains(attackingCard.getNumber()))
+		{
+			ArrayList<Card> cardsOfAttacker = this.cardsOfAttackerOneOnTable;
+			if (this.attackers.size() > 1 && this.attackers.get(1).equals(attackingPlayer))
+				cardsOfAttacker = this.cardsOfAttackerTwoOnTable;
+
+			cardsOfAttacker.add(attackingCard);
+
+			this.numbersOnTable.add(attackingCard.getNumber());
+		}
+		else
+		{
+			// TODO the card cannot be played because there is no card by this number
+			System.err.println("the card cannot be played because there is no card by this number");
+		}
+
+	}
+
 	public boolean canAttackWithThisCard(Card card)
 	{
 		//		return true;
@@ -148,9 +183,9 @@ public class Table
 		return this.deck;
 	}
 
-	public ArrayList<Player> getPlayers()
+	public List<Player> getPlayers()
 	{
-		return this.players;
+		return Collections.unmodifiableList(this.players);
 	}
 
 	public Player getActivePlayer()
@@ -201,8 +236,27 @@ public class Table
 			System.out.println("new active player: " + this.activePlayer.getName() + " is Attacker " + this.activePlayer.isAttacker());
 		}
 
-		for (Player player : this.attackers)
-			player.fillUp();
-		this.defender.fillUp();
+		for (Player player : this.players)
+			player.fillUp(this.deck);
+	}
+
+	public HashSet<Integer> getNumbersOnTable()
+	{
+		return this.numbersOnTable;
+	}
+
+	public List<Card> getNotDefendedCards()
+	{
+		ArrayList<Card> notYetDefendedCards = new ArrayList<Card>();
+
+		for (Card card : this.cardsOfAttackerOneOnTable)
+			if (!defendedCards.containsKey(card))
+				notYetDefendedCards.add(card);
+
+		// TODO add player two
+		if (!this.cardsOfAttackerTwoOnTable.isEmpty())
+			System.err.println("see TODO!");
+
+		return Collections.unmodifiableList(notYetDefendedCards);
 	}
 }

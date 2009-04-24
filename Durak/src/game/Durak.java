@@ -6,25 +6,21 @@ public class Durak
 {
 	private Rules rules;
 	private Table table;
-	
+
 	public void newGame(ArrayList<Player> players, Rules rules)
 	{
-		assert(players != null && !players.isEmpty());
-		assert(rules != null);
-		
-		this.rules = rules;		
-		this.table = new Table(players, this);
+		assert (players != null && !players.isEmpty());
+		assert (rules != null);
 
-		
-		for(Player player : players)
-			player.newGame();
+		this.rules = rules;
+		this.table = new Table(players, this);
 	}
-	
+
 	public Rules getRules()
 	{
 		return this.rules;
 	}
-	
+
 	public Table getTable()
 	{
 		return this.table;

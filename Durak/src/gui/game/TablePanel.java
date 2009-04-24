@@ -15,8 +15,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.dnd.DropTarget;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
@@ -34,9 +34,9 @@ public class TablePanel extends JTiledPanel
 	private JScrollPane panelAttackerOne;
 	private JScrollPane panelAttackerTwo;
 
-	private ArrayList<Card> cardsFromAttackerOne;
-	private ArrayList<Card> cardsFromAttackerTwo;
-	private HashMap<Card, Card> defendedCards;
+	private List<Card> cardsFromAttackerOne;
+	private List<Card> cardsFromAttackerTwo;
+	private Map<Card, Card> defendedCards;
 
 	private DurakActionListener actionListener;
 
@@ -68,7 +68,7 @@ public class TablePanel extends JTiledPanel
 		this.layeredPanelAttackerTwo.repaint();
 	}
 
-	public void newGame(ArrayList<Player> players, final Player activePlayer)
+	public void newGame(List<Player> players, final Player activePlayer)
 	{
 		this.activePlayer = activePlayer;
 
@@ -117,7 +117,7 @@ public class TablePanel extends JTiledPanel
 			this.add(panelAttackerTwo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	}
 
-	public void updateDisplay(ArrayList<Card> cardsFromAttackerOne, ArrayList<Card> cardsFromAttackerTwo, HashMap<Card, Card> defendedCards, Player activePlayer)
+	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, Player activePlayer)
 	{
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;

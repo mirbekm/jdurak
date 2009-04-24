@@ -104,7 +104,7 @@ public class DurakActionListener implements ActionListener
 		Table table = this.durak.getTable();
 
 		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getActivePlayer());
-		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOnTableOfAttackerTwo(), table.getDefendedCards(), table.getActivePlayer());
+		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getActivePlayer());
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(this.durak.getTable().getDeck(), this.durak.getTable().getPlayers());
 	}
 
