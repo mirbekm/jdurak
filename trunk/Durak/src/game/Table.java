@@ -245,7 +245,7 @@ public class Table
 		return this.numbersOnTable;
 	}
 
-	public List<Card> getNotDefendedCards()
+	public List<Card> getNotDefeatedCards()
 	{
 		ArrayList<Card> notYetDefendedCards = new ArrayList<Card>();
 

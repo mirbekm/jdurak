@@ -6,5 +6,5 @@ public interface AiInterface
 {
 	public boolean wantsToPlayAnotherCard();
 
-	public Card getNextCard();
+	public Card getNextAttackCard();
 }

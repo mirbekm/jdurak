@@ -45,7 +45,7 @@ public class TableTest
 		assertTrue(this.table.getCardsOfAttackerOneOnTable().isEmpty());
 		assertNull(this.table.getCardsOfAttackerTwoOnTable());
 		assertTrue(this.table.getDefendedCards().isEmpty());
-		assertTrue(this.table.getNotDefendedCards().isEmpty());
+		assertTrue(this.table.getNotDefeatedCards().isEmpty());
 		assertTrue(this.table.getNumbersOnTable().isEmpty());
 	}
 
@@ -120,19 +120,19 @@ public class TableTest
 		assertFalse(this.table.canDefendWithCard(defendCardFour, attackCardThree));
 		assertTrue(this.table.canDefendWithCard(defendCardFive, attackCardThree));
 
-		assertEquals(3, this.table.getNotDefendedCards().size());
+		assertEquals(3, this.table.getNotDefeatedCards().size());
 
 		this.table.defend(attackCardOne, defendCardOne);
 
-		assertEquals(2, this.table.getNotDefendedCards().size());
+		assertEquals(2, this.table.getNotDefeatedCards().size());
 
 		this.table.defend(attackCardTwo, defendCardTwo);
 
-		assertEquals(1, this.table.getNotDefendedCards().size());
+		assertEquals(1, this.table.getNotDefeatedCards().size());
 
 		this.table.defend(attackCardThree, defendCardFive);
 
-		assertEquals(0, this.table.getNotDefendedCards().size());
+		assertEquals(0, this.table.getNotDefeatedCards().size());
 
 		assertEquals(defendCardOne, this.table.getDefendedCards().get(attackCardOne));
 		assertEquals(defendCardTwo, this.table.getDefendedCards().get(attackCardTwo));
