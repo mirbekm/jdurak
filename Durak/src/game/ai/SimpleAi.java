@@ -5,6 +5,7 @@ import game.Card;
 import game.Durak;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SimpleAi extends AbstractPlayer implements AiInterface
 {
@@ -16,14 +17,12 @@ public class SimpleAi extends AbstractPlayer implements AiInterface
 	}
 
 	@Override
-	public Card getNextCard()
+	public Card getNextAttackCard()
 	{
 		if (this.possibleCards.isEmpty())
 			return null;
 		else
-		{
-			return null;
-		}
+			return Collections.min(this.possibleCards);
 	}
 
 	@Override
@@ -39,7 +38,6 @@ public class SimpleAi extends AbstractPlayer implements AiInterface
 			if (this.durak.getTable().getNumbersOnTable().isEmpty())
 			{
 				this.possibleCards.addAll(this.hand);
-				return true;
 			}
 			else
 			{
@@ -48,15 +46,18 @@ public class SimpleAi extends AbstractPlayer implements AiInterface
 					for (Card cardOnHand : this.hand)
 						if (cardOnHand.getNumber() == numberOnTable.intValue())
 							this.possibleCards.add(cardOnHand);
-
-				return !this.possibleCards.isEmpty();
 			}
 		}
 		// is defender
 		else
 		{
+			for (Card cardToBeDefeated : this.durak.getTable().getNotDefeatedCards())
+				for (Card cardOnHand : this.hand)
+					if (cardOnHand.compareTo(cardToBeDefeated) > 1)
+						this.possibleCards.add(cardOnHand);
+
 		}
-		return false;
+		return !this.possibleCards.isEmpty();
 	}
 
 	private void resetLists()
