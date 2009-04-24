@@ -22,11 +22,11 @@ public class Deck
 	 * Create a new deck with 4 * <code>cardsPerSuit</code> cards
 	 * 
 	 * @param cardsPerSuit
-	 *            the cards per suit. Has to be greater than 36 and smaller than 53 (exclusive). <code>cardsPerSuit</code> % 4 has to be 0
+	 *            the cards per suit. Has to be greater than {@value Rules#MIN_AMOUNT_OF_CARDS} and smaller than {@value Rules#MAX_AMOUNT_OF_CARDS} (incl). <code>cardsPerSuit</code> % 4 has to be 0
 	 */
 	public Deck(int cardsPerSuit)
 	{
-		assert (cardsPerSuit >= 36 && cardsPerSuit <= 52);
+		assert (cardsPerSuit >= Rules.MIN_AMOUNT_OF_CARDS && cardsPerSuit <= Rules.MAX_AMOUNT_OF_CARDS);
 		assert (cardsPerSuit % 4 == 0);
 
 		this.fillDeckRandomly(cardsPerSuit);
@@ -36,11 +36,11 @@ public class Deck
 	 * Fill the deck with the correct amount of cards and shuffle it afterwards
 	 * 
 	 * @param cardsPerSuit
-	 *            the cards per suit. Has to be greater than 36 and smaller than 53 (exclusive). <code>cardsPerSuit</code> % 4 has to be 0
+	 *            the cards per suit. Has to be greater than {@value Rules#MIN_AMOUNT_OF_CARDS} and smaller than {@link Rules#MAX_AMOUNT_OF_CARDS} (incl). <code>cardsPerSuit</code> % 4 has to be 0
 	 */
 	private void fillDeckRandomly(int cardsPerSuit)
 	{
-		assert (cardsPerSuit >= 36 && cardsPerSuit <= 52);
+		assert (cardsPerSuit >= Rules.MIN_AMOUNT_OF_CARDS && cardsPerSuit <= Rules.MAX_AMOUNT_OF_CARDS);
 		assert (cardsPerSuit % 4 == 0);
 
 		this.deck = new Stack<Card>();

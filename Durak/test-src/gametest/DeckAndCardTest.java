@@ -7,6 +7,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import game.Card;
 import game.Deck;
+import game.Rules;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +19,13 @@ public class DeckAndCardTest
 	@Before
 	public void setUp()
 	{
-		this.deck = new Deck(52);
+		this.deck = new Deck(Rules.MAX_AMOUNT_OF_CARDS);
 	}
 
 	@Test
 	public void testSize()
 	{
-		for (int i = 0; i < 52; i++)
+		for (int i = 0; i < Rules.MAX_AMOUNT_OF_CARDS; i++)
 			assertNotNull(this.deck.getCard());
 
 		assertNull(this.deck.getCard());
@@ -51,9 +52,9 @@ public class DeckAndCardTest
 	@Test
 	public void testRemainingCards()
 	{
-		assertEquals(52, this.deck.getRemainingCards());
+		assertEquals(Rules.MAX_AMOUNT_OF_CARDS, this.deck.getRemainingCards());
 
-		for (int i = 0; i < 51; i++)
+		for (int i = 0; i < Rules.MAX_AMOUNT_OF_CARDS - 1; i++)
 			this.deck.getCard();
 
 		assertEquals(1, this.deck.getRemainingCards());
