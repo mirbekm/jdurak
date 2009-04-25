@@ -4,6 +4,7 @@ package game;
  * A game card.
  * 
  * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
+ * @version $Date$ - Revision: $Rev$
  */
 public class Card implements Comparable<Card>
 {
