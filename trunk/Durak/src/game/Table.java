@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
+ * @version $Date$ - Revision: $Rev$
+ */
 public class Table
 {
 	private Deck deck = null;

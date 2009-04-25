@@ -19,7 +19,7 @@ public class DeckAndCardTest
 	@Before
 	public void setUp()
 	{
-		this.deck = new Deck(Rules.MAX_AMOUNT_OF_CARDS);
+		this.deck = new Deck(Rules.MAX_AMOUNT_OF_CARDS_PER_SUIT);
 	}
 
 	@Test

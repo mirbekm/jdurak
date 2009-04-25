@@ -1,11 +1,20 @@
 package game;
 
+/**
+ * The rules for a game of durak.
+ * 
+ * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
+ * @version $Date$ - Revision: $Rev$
+ */
 public class Rules
 {
 	public static int MIN_AMOUNT_OF_CARDS = 36;
-	public static int MAX_AMOUNT_OF_CARDS = 56;
+	public static int MAX_AMOUNT_OF_CARDS = 52;
 
-	private int numberOfCardsPerSuit = 9;
+	public static int MIN_AMOUNT_OF_CARDS_PER_SUIT = 8;
+	public static int MAX_AMOUNT_OF_CARDS_PER_SUIT = 13;
+
+	private int numberOfCardsPerSuit = 8;
 	private int numberOfCardsPerPlayer = 16;
 	private boolean transferringAllowed = false;
 
@@ -23,7 +32,7 @@ public class Rules
 	/**
 	 * The number of cards in the game
 	 * 
-	 * @return a value between 36 and 52 (incl). return value % 4 = 0
+	 * @return a value between {@value Rules#MIN_AMOUNT_OF_CARDS} and {@value Rules#MAX_AMOUNT_OF_CARDS} (incl). return value % 4 = 0
 	 */
 	public int getNumberOfCards()
 	{
@@ -46,7 +55,7 @@ public class Rules
 
 	/**
 	 * 
-	 * @return the number of cards per suit. from 9 to 14
+	 * @return the number of cards per suit. from {@value Rules#MIN_AMOUNT_OF_CARDS_PER_SUIT} to {@value Rules#MAX_AMOUNT_OF_CARDS_PER_SUIT}
 	 */
 	public int getNumberOfCardsPerSuit()
 	{

@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * create a new game of durak with a set of rules and a list of players
  * 
  * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
- * 
+ * @version $Date$ - Revision: $Rev$
  */
 public class Durak
 {
