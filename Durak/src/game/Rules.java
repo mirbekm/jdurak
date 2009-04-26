@@ -15,7 +15,7 @@ public class Rules
 	public static int MAX_AMOUNT_OF_CARDS_PER_SUIT = 13;
 
 	private int numberOfCardsPerSuit = 8;
-	private int numberOfCardsPerPlayer = 16;
+	private int numberOfCardsPerPlayer = 6;
 	private boolean isTransferringAllowed = false;
 
 	/**

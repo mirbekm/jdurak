@@ -63,7 +63,7 @@ public class CardManager
 		case Card.CLUBS:
 			return "clubs";
 		case Card.DIAMONDS:
-			return "diamonds";
+			return "diams";
 		case Card.HEARTS:
 			return "hearts";
 		case Card.SPADES:
