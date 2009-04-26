@@ -55,7 +55,7 @@ public class DurakPanel extends JPanel
 	{
 		this.handPanel.updateDisplay(table.getActivePlayer());
 		this.deckPanel.updateDisplay(table.getDeck(), table.getPlayers());
-		this.tablePanel.newGame(table.getPlayers(), table.getActivePlayer());
+		this.tablePanel.newGame(table.getPlayers(), table.getActivePlayer(), table.getAttackers());
 		this.turnPanel.newGame();
 	}
 

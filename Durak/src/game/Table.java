@@ -151,7 +151,7 @@ public class Table
 		assert (attackingPlayer != null);
 
 		if (!this.attackers.contains(attackingPlayer))
-			// TODO attacking player is actually no attacking player!
+			// TODO proper error message
 			throw new IllegalArgumentException(attackingPlayer + " is not an attacking player!");
 
 		if (this.numbersOnTable.isEmpty() || this.numbersOnTable.contains(attackingCard.getNumber()))
@@ -166,7 +166,7 @@ public class Table
 		}
 		else
 		{
-			// TODO the card cannot be played because there is no card by this number
+			// TODO proper error message
 			System.err.println("the card cannot be played because there is no card by this number");
 		}
 
@@ -174,7 +174,6 @@ public class Table
 
 	public boolean canAttackWithThisCard(Card card)
 	{
-		//		return true;
 		return this.numbersOnTable.contains(card.getNumber()) || this.numbersOnTable.isEmpty();
 	}
 
@@ -193,6 +192,11 @@ public class Table
 		return Collections.unmodifiableList(this.players);
 	}
 
+	public List<AbstractPlayer> getAttackers()
+	{
+		return Collections.unmodifiableList(attackers);
+	}
+
 	public AbstractPlayer getActivePlayer()
 	{
 		return this.activePlayer;
@@ -206,11 +210,12 @@ public class Table
 
 	public void endTurn()
 	{
-		//TODO choose right player
+		//TODO choose right player - done?
 		//TODO game is for 2 players only atm
 
 		if (this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size())
 		{
+			// defender has won
 			this.resetLists();
 
 			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
@@ -222,12 +227,11 @@ public class Table
 
 			this.attackers.clear();
 			this.attackers.add(this.activePlayer);
-
-			System.out.println("defender has won");
-			System.out.println("new active player: " + this.activePlayer.getName() + " is Attacker " + this.activePlayer.isAttacker());
+			// TODO add more attackers here
 		}
 		else
 		{
+			// defender has lost
 			this.defender.getHand().addAll(this.cardsOfDefender);
 			this.defender.getHand().addAll(this.cardsOfAttackerOneOnTable);
 			this.defender.getHand().addAll(this.cardsOfAttackerTwoOnTable);
@@ -236,9 +240,6 @@ public class Table
 
 			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
 			this.activePlayer = this.players.get((numberOfActivePlayer + 2) % this.players.size());
-
-			System.out.println("defender has lost:");
-			System.out.println("new active player: " + this.activePlayer.getName() + " is Attacker " + this.activePlayer.isAttacker());
 		}
 
 		for (AbstractPlayer player : this.players)

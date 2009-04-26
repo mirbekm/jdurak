@@ -42,7 +42,10 @@ public class TablePanel extends JTiledPanel
 
 	private DropTarget dropTargetPanelAttackerOne;
 
-	private AbstractPlayer activePlayer;
+	private TitledBorder borderPanelAttackerOne;
+
+	//	private AbstractPlayer activePlayer;
+	private AbstractPlayer humanPlayer;
 
 	public TablePanel(DurakActionListener actionListener)
 	{
@@ -68,9 +71,9 @@ public class TablePanel extends JTiledPanel
 		this.layeredPanelAttackerTwo.repaint();
 	}
 
-	public void newGame(List<AbstractPlayer> players, final AbstractPlayer activePlayer)
+	public void newGame(List<AbstractPlayer> players, final AbstractPlayer activePlayer, final List<AbstractPlayer> attackers)
 	{
-		this.activePlayer = activePlayer;
+		this.humanPlayer = players.get(0);
 
 		this.panelAttackerOne = new JScrollPane(this.layeredPanelAttackerOne, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 		{
@@ -80,7 +83,7 @@ public class TablePanel extends JTiledPanel
 			public void repaint()
 			{
 				super.repaint();
-				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, activePlayer);
+				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
 			}
 		};
 		this.panelAttackerTwo = new JScrollPane(this.layeredPanelAttackerTwo, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
@@ -91,7 +94,7 @@ public class TablePanel extends JTiledPanel
 			public void repaint()
 			{
 				super.repaint();
-				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, activePlayer);
+				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
 			}
 		};
 
@@ -105,7 +108,7 @@ public class TablePanel extends JTiledPanel
 		this.dropTargetPanelAttackerOne.setActive(false);
 
 		//TODO show correct name
-		TitledBorder borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from Player 1");
+		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + activePlayer.getName());
 		TitledBorder borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from Computer 2");
 
 		panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
@@ -117,16 +120,15 @@ public class TablePanel extends JTiledPanel
 			this.add(panelAttackerTwo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	}
 
-	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, AbstractPlayer activePlayer)
+	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, List<AbstractPlayer> attackers)
 	{
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;
 		this.defendedCards = defendedCards;
-		this.activePlayer = activePlayer;
 
 		if (this.dropTargetPanelAttackerOne != null)
 		{
-			if (activePlayer != null && activePlayer.isAttacker())
+			if (attackers.get(0) != null && attackers.get(0).isAttacker())
 				this.dropTargetPanelAttackerOne.setActive(true);
 			else
 				this.dropTargetPanelAttackerOne.setActive(false);
@@ -134,69 +136,71 @@ public class TablePanel extends JTiledPanel
 
 		if (cardsFromAttackerOne != null && cardsFromAttackerOne.size() > 0)
 		{
-			this.layeredPanelAttackerOne.removeAll();
-			int xOffset = CardManager.CARD_WIDTH + 4;
-
-			int cardsAttackerOne = cardsFromAttackerOne.size();
-			int cardsPerRow = (this.panelAttackerOne.getWidth() - 10) / (xOffset);
-			int rows = (this.panelAttackerOne.getHeight() - 10) / (CardManager.CARD_HEIGHT + 20);
-			int rowSpacing = (this.panelAttackerOne.getHeight() - 10) - rows * CardManager.CARD_HEIGHT;
-
-			if (cardsAttackerOne > cardsPerRow * rows)
-			{
-				if (cardsAttackerOne % rows == 0) // TODO division by zero exception after restarting game
-					cardsPerRow = cardsAttackerOne / rows;
-				else
-					cardsPerRow = (cardsAttackerOne / rows) + 1;
-			}
-
-			int actualCardsPerRow = 0;
-			int actualRow = 0;
-			for (int cardNumber = 0; cardNumber < cardsFromAttackerOne.size(); cardNumber++)
-			{
-				Card card = cardsFromAttackerOne.get(cardNumber);
-				GuiCard guiCard = new GuiCard(card);
-				guiCard.setCursor(Cursor.getDefaultCursor());
-
-				if (actualCardsPerRow >= cardsPerRow)
-				{
-					actualCardsPerRow = 0;
-					actualRow++;
-				}
-
-				guiCard.setBounds((actualCardsPerRow) * (xOffset), actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows), CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-
-				GuiCard cardDefendedWith = null;
-				if (defendedCards.containsKey(card))
-				{
-					cardDefendedWith = new GuiCard(defendedCards.get(card));
-					cardDefendedWith.setBounds((actualCardsPerRow) * (xOffset), (actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows)) + 35, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-					cardDefendedWith.setCursor(Cursor.getDefaultCursor());
-				}
-				else
-				{
-					if (!this.activePlayer.isAttacker())
-						new DropTarget(guiCard, new TableDropTargetListenerAsDefender(actionListener, guiCard));
-				}
-
-				actualCardsPerRow++;
-
-				this.layeredPanelAttackerOne.add(guiCard, 0);
-
-				if (cardDefendedWith != null)
-					this.layeredPanelAttackerOne.add(cardDefendedWith, 0);
-			}
-
-			this.layeredPanelAttackerOne.setPreferredSize(new Dimension((cardsPerRow * CardManager.CARD_WIDTH) + (cardsPerRow * 4), this.layeredPanelAttackerOne.getHeight()));
-			this.layeredPanelAttackerOne.revalidate();
+			this.updatePanel(this.layeredPanelAttackerOne, this.panelAttackerOne, cardsFromAttackerOne, defendedCards);
 		}
 
-		if (cardsFromAttackerTwo != null)
+		if (cardsFromAttackerTwo != null && cardsFromAttackerOne.size() > 0)
 		{
-			// TODO go code that freakin AI you lazy bastard
+			// TODO make multiple opponents possible first
 		}
 
 		// TODO defeat me some cards baby
+	}
+
+	private void updatePanel(JLayeredPane layeredPane, JScrollPane scrollPane, List<Card> cardsFromAttacker, Map<Card, Card> defendedCards)
+	{
+		layeredPane.removeAll();
+		int xOffset = CardManager.CARD_WIDTH + 4;
+
+		int cardsAttackerOne = cardsFromAttacker.size();
+		int cardsPerRow = (scrollPane.getWidth() - 10) / (xOffset);
+		int rows = (scrollPane.getHeight() - 10) / (CardManager.CARD_HEIGHT + 20);
+		int rowSpacing = (scrollPane.getHeight() - 10) - rows * CardManager.CARD_HEIGHT;
+
+		if (cardsAttackerOne > cardsPerRow * rows)
+		{
+			if (cardsAttackerOne % rows == 0) // TODO division by zero exception after restarting game
+				cardsPerRow = cardsAttackerOne / rows;
+			else
+				cardsPerRow = (cardsAttackerOne / rows) + 1;
+		}
+
+		int actualCardsPerRow = 0;
+		int actualRow = 0;
+		for (int cardNumber = 0; cardNumber < cardsFromAttacker.size(); cardNumber++)
+		{
+			Card card = cardsFromAttacker.get(cardNumber);
+			GuiCard guiCard = new GuiCard(card);
+			guiCard.setCursor(Cursor.getDefaultCursor());
+
+			if (actualCardsPerRow >= cardsPerRow)
+			{
+				actualCardsPerRow = 0;
+				actualRow++;
+			}
+
+			guiCard.setBounds((actualCardsPerRow) * (xOffset), actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows), CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+
+			GuiCard cardDefendedWith = null;
+			if (defendedCards.containsKey(card))
+			{
+				cardDefendedWith = new GuiCard(defendedCards.get(card));
+				cardDefendedWith.setBounds((actualCardsPerRow) * (xOffset), (actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows)) + 35, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+				cardDefendedWith.setCursor(Cursor.getDefaultCursor());
+			}
+			else
+			{
+				if (!this.humanPlayer.isAttacker())
+					new DropTarget(guiCard, new TableDropTargetListenerAsDefender(this.actionListener, guiCard));
+			}
+
+			actualCardsPerRow++;
+
+			layeredPane.add(guiCard, 0);
+
+			if (cardDefendedWith != null)
+				layeredPane.add(cardDefendedWith, 0);
+		}
 	}
 
 }
