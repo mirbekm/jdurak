@@ -84,10 +84,10 @@ public class Card implements Comparable<Card>
 	@Override
 	public int compareTo(Card anotherCard)
 	{
-		int thisValue = (this.isTrump()) ? 900 + this.number : this.getSuitAndNumber();
-		int anotherCardValue = (anotherCard.isTrump()) ? 900 + anotherCard.getNumber() : anotherCard.getSuitAndNumber();
+		if (this.number == anotherCard.getNumber() && this.suit == anotherCard.getSuit())
+			return 0;
 
-		return thisValue - anotherCardValue;
+		return this.isGreaterThan(anotherCard) ? 1 : -1;
 	}
 
 	/**

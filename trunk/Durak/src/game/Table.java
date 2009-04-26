@@ -16,11 +16,11 @@ public class Table
 {
 	private Deck deck = null;
 
-	private ArrayList<Player> players = null;
+	private ArrayList<AbstractPlayer> players = null;
 
-	private Player defender = null;
-	private ArrayList<Player> attackers = null;
-	private Player activePlayer = null;
+	private AbstractPlayer defender = null;
+	private ArrayList<AbstractPlayer> attackers = null;
+	private AbstractPlayer activePlayer = null;
 	private Durak durak;
 
 	private ArrayList<Card> cardsOfAttackerOneOnTable;
@@ -29,7 +29,7 @@ public class Table
 	private HashMap<Card, Card> defendedCards;
 	private HashSet<Integer> numbersOnTable;
 
-	public Table(ArrayList<Player> players, Durak durak)
+	public Table(ArrayList<AbstractPlayer> players, Durak durak)
 	{
 		this.durak = durak;
 		this.players = players;
@@ -39,7 +39,7 @@ public class Table
 
 	public void newGame()
 	{
-		this.attackers = new ArrayList<Player>();
+		this.attackers = new ArrayList<AbstractPlayer>();
 
 		this.deck = new Deck(this.durak.getRules().getNumberOfCardsPerSuit());
 		this.activePlayer = this.players.get(0);
@@ -53,7 +53,7 @@ public class Table
 
 		this.resetLists();
 
-		for (Player player : players)
+		for (AbstractPlayer player : players)
 			player.newGame(this.deck);
 	}
 
@@ -115,7 +115,7 @@ public class Table
 
 		if (this.numbersOnTable.contains(attackingCard.getNumber()) || this.numbersOnTable.isEmpty())
 		{
-			Player attackingPlayer = null;
+			AbstractPlayer attackingPlayer = null;
 			ArrayList<Card> cardsOfAttacker = null;
 
 			if (attackers.get(0).getHand().contains(attackingCard))
@@ -188,12 +188,12 @@ public class Table
 		return this.deck;
 	}
 
-	public List<Player> getPlayers()
+	public List<AbstractPlayer> getPlayers()
 	{
 		return Collections.unmodifiableList(this.players);
 	}
 
-	public Player getActivePlayer()
+	public AbstractPlayer getActivePlayer()
 	{
 		return this.activePlayer;
 	}
@@ -241,7 +241,7 @@ public class Table
 			System.out.println("new active player: " + this.activePlayer.getName() + " is Attacker " + this.activePlayer.isAttacker());
 		}
 
-		for (Player player : this.players)
+		for (AbstractPlayer player : this.players)
 			player.fillUp(this.deck);
 	}
 
@@ -250,7 +250,7 @@ public class Table
 		return this.numbersOnTable;
 	}
 
-	public List<Card> getNotDefeatedCards()
+	public List<Card> getNotYetDefeatedCards()
 	{
 		ArrayList<Card> notYetDefendedCards = new ArrayList<Card>();
 

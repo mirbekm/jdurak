@@ -24,60 +24,59 @@ public class DurakWindow extends JFrame
 	private WelcomePanel welcomePanel;
 	private DurakPanel durakPanel;
 	private DurakActionListener actionListener;
-	
-	
+
 	public DurakWindow()
 	{
 		super("Durak - 0.01a");
-		this.setMinimumSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));	
-		this.setPreferredSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));	
+		this.setMinimumSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
+		this.setPreferredSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
 
 		this.setIconImage(new ImageIcon(Object.class.getResource("/images/icons/durak.png")).getImage());
-		
+
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setLookAndFeel();
-		
+
 		this.actionListener = new DurakActionListener(new Durak(), this);
 		this.welcomePanel = new WelcomePanel(this.actionListener);
 		this.durakPanel = new DurakPanel(this.actionListener);
-		
+
 		this.setPanel(this.welcomePanel);
-		
+
 		this.setJMenuBar(new Menu(this.actionListener));
-	
-		ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
-		
+
+		ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+
 		this.pack();
-	
-//		super.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (super.getSize().width / 2), (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (super.getSize().height / 2));
-		this.setVisible(true);	
-	}	
-	
+
+		//		super.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (super.getSize().width / 2), (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (super.getSize().height / 2));
+		this.setVisible(true);
+	}
+
 	public WelcomePanel getWelcomePanel()
 	{
 		return this.welcomePanel;
 	}
-	
+
 	public DurakPanel getDurakPanel()
 	{
 		return this.durakPanel;
 	}
-	
+
 	public void showDurakPanel()
 	{
 		this.setPanel(this.durakPanel);
 	}
-	
+
 	public void showWelcomePanel()
 	{
 		this.setPanel(this.welcomePanel);
 	}
-	
+
 	public void newGame(Table table)
 	{
 		this.durakPanel.newGame(table);
 	}
-	
+
 	/**
 	 * The panel in the parameter becomes the new contentpane
 	 * 
@@ -90,7 +89,7 @@ public class DurakWindow extends JFrame
 		this.setContentPane(panel);
 		this.getContentPane().setVisible(true);
 	}
-	
+
 	/**
 	 * Set the OS-specific Look & Feel
 	 * 
@@ -105,33 +104,32 @@ public class DurakWindow extends JFrame
 		{
 			// nothing
 		}
-	}	
-	
-	
+	}
+
 	private class Menu extends JMenuBar
 	{
 		public Menu(DurakActionListener actionListener)
 		{
-			JMenu menuGame = new JMenu("Spiel");
-			menuGame.setMnemonic('S');
-			
+			JMenu menuGame = new JMenu("Game");
+			menuGame.setMnemonic('G');
+
 			JMenuItem newGame = new JMenuItem("New", new ImageIcon(Object.class.getResource("/images/icons/durak.png")));
 			newGame.setMnemonic('N');
 			newGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 			newGame.addActionListener(actionListener);
 			newGame.setActionCommand("" + DurakActionListener.ACTION_SHOW_SETTINGS);
-			
-			JMenuItem quitGame = new JMenuItem("Close", new ImageIcon(Object.class.getResource("/images/icons/bullet_cross.png")));
-			quitGame.setMnemonic('C');
-			quitGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+
+			JMenuItem quitGame = new JMenuItem("Exit", new ImageIcon(Object.class.getResource("/images/icons/bullet_cross.png")));
+			quitGame.setMnemonic('X');
+			quitGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 			quitGame.setActionCommand("" + DurakActionListener.ACTION_QUIT);
 			quitGame.addActionListener(actionListener);
-			
+
 			menuGame.add(newGame);
 			menuGame.addSeparator();
 			menuGame.add(quitGame);
-			
+
 			this.add(menuGame);
 		}
-	}	
+	}
 }

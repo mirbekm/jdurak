@@ -1,13 +1,13 @@
 package game.ai;
 
-import game.AbstractPlayer;
 import game.Card;
 import game.Durak;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public class SimpleAi extends AbstractPlayer implements AiInterface
+public class SimpleAi extends AbstractAi
 {
 	private ArrayList<Card> possibleCards;
 
@@ -17,9 +17,27 @@ public class SimpleAi extends AbstractPlayer implements AiInterface
 	}
 
 	@Override
+	public Card[] getNextDefendCard()
+	{
+		List<Card> cardsToBeDefeated = this.durak.getTable().getNotYetDefeatedCards();
+		if (this.isAttacker || cardsToBeDefeated.isEmpty())
+			return null;
+
+		Card cardToBeDefeated = Collections.min(cardsToBeDefeated);
+
+		ArrayList<Card> possibleDefendCards = new ArrayList<Card>();
+
+		for (Card cardDefendingWith : this.possibleCards)
+			if (cardDefendingWith.isGreaterThan(cardToBeDefeated))
+				possibleDefendCards.add(cardDefendingWith);
+
+		return new Card[] { cardToBeDefeated, Collections.min(possibleDefendCards) };
+	}
+
+	@Override
 	public Card getNextAttackCard()
 	{
-		if (this.possibleCards.isEmpty())
+		if (this.possibleCards.isEmpty() || !this.isAttacker)
 			return null;
 		else
 			return Collections.min(this.possibleCards);
@@ -51,9 +69,9 @@ public class SimpleAi extends AbstractPlayer implements AiInterface
 		// is defender
 		else
 		{
-			for (Card cardToBeDefeated : this.durak.getTable().getNotDefeatedCards())
+			for (Card cardToBeDefeated : this.durak.getTable().getNotYetDefeatedCards())
 				for (Card cardOnHand : this.hand)
-					if (cardOnHand.compareTo(cardToBeDefeated) > 1)
+					if (cardOnHand.compareTo(cardToBeDefeated) > 0)
 						this.possibleCards.add(cardOnHand);
 
 		}

@@ -8,7 +8,7 @@ package game;
  */
 public class Rules
 {
-	public static int MIN_AMOUNT_OF_CARDS = 36;
+	public static int MIN_AMOUNT_OF_CARDS = 32;
 	public static int MAX_AMOUNT_OF_CARDS = 52;
 
 	public static int MIN_AMOUNT_OF_CARDS_PER_SUIT = 8;
@@ -16,7 +16,7 @@ public class Rules
 
 	private int numberOfCardsPerSuit = 8;
 	private int numberOfCardsPerPlayer = 16;
-	private boolean transferringAllowed = false;
+	private boolean isTransferringAllowed = false;
 
 	/**
 	 * Create a set of rules with all default values but the number of cards
@@ -89,7 +89,7 @@ public class Rules
 	 */
 	public boolean isTransferringAllowed()
 	{
-		return transferringAllowed;
+		return isTransferringAllowed;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class Rules
 	 */
 	public void setTransferringAllowed(boolean bool)
 	{
-		this.transferringAllowed = bool;
+		this.isTransferringAllowed = bool;
 	}
 
 	@Override

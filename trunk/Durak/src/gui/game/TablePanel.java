@@ -1,7 +1,7 @@
 package gui.game;
 
+import game.AbstractPlayer;
 import game.Card;
-import game.Player;
 import gui.helpers.CardManager;
 import gui.helpers.Colors;
 import gui.libs.JTiledPanel;
@@ -42,7 +42,7 @@ public class TablePanel extends JTiledPanel
 
 	private DropTarget dropTargetPanelAttackerOne;
 
-	private Player activePlayer;
+	private AbstractPlayer activePlayer;
 
 	public TablePanel(DurakActionListener actionListener)
 	{
@@ -68,7 +68,7 @@ public class TablePanel extends JTiledPanel
 		this.layeredPanelAttackerTwo.repaint();
 	}
 
-	public void newGame(List<Player> players, final Player activePlayer)
+	public void newGame(List<AbstractPlayer> players, final AbstractPlayer activePlayer)
 	{
 		this.activePlayer = activePlayer;
 
@@ -117,7 +117,7 @@ public class TablePanel extends JTiledPanel
 			this.add(panelAttackerTwo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	}
 
-	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, Player activePlayer)
+	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, AbstractPlayer activePlayer)
 	{
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;
@@ -144,7 +144,7 @@ public class TablePanel extends JTiledPanel
 
 			if (cardsAttackerOne > cardsPerRow * rows)
 			{
-				if (cardsAttackerOne % rows == 0)
+				if (cardsAttackerOne % rows == 0) // TODO division by zero exception after restarting game
 					cardsPerRow = cardsAttackerOne / rows;
 				else
 					cardsPerRow = (cardsAttackerOne / rows) + 1;

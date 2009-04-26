@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import game.AbstractPlayer;
 import game.Card;
 import game.Deck;
 import game.Durak;
@@ -22,7 +23,7 @@ public class TableTest
 {
 	private Table table;
 	private Durak durak;
-	private ArrayList<Player> players;
+	private ArrayList<AbstractPlayer> players;
 	private Rules rules;
 	private final int SIZE_OF_DECK = Rules.MAX_AMOUNT_OF_CARDS;
 
@@ -30,7 +31,7 @@ public class TableTest
 	public void setUpBeforeClass()
 	{
 		this.durak = new Durak();
-		this.players = new ArrayList<Player>();
+		this.players = new ArrayList<AbstractPlayer>();
 		this.players.add(new Player(durak, "Player One"));
 		this.players.add(new Player(durak, "Player Two"));
 		this.durak.newGame(players, rules = new Rules(SIZE_OF_DECK));
@@ -45,7 +46,7 @@ public class TableTest
 		assertTrue(this.table.getCardsOfAttackerOneOnTable().isEmpty());
 		assertNull(this.table.getCardsOfAttackerTwoOnTable());
 		assertTrue(this.table.getDefendedCards().isEmpty());
-		assertTrue(this.table.getNotDefeatedCards().isEmpty());
+		assertTrue(this.table.getNotYetDefeatedCards().isEmpty());
 		assertTrue(this.table.getNumbersOnTable().isEmpty());
 	}
 
@@ -54,7 +55,7 @@ public class TableTest
 	{
 		int expected = this.rules.getNumberOfCardsPerPlayer() * this.players.size();
 		int actual = 0;
-		for (Player player : this.players)
+		for (AbstractPlayer player : this.players)
 			actual += player.getHand().size();
 
 		assertEquals(expected, actual);
@@ -67,7 +68,7 @@ public class TableTest
 	{
 		int notTrumpSuit = (Deck.trumpSuit + 2) % 4;
 
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		// no cards on table - attack with 8
 		Card lowCard = new Card(notTrumpSuit, 8);
@@ -90,7 +91,7 @@ public class TableTest
 		int suitOne = (Deck.trumpSuit + 2) % 4;
 		int suitTwo = (Deck.trumpSuit + 3) % 4;
 
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		Card attackCardOne = new Card(suitOne, 8);
 		Card attackCardTwo = new Card(suitTwo, 8);
@@ -120,19 +121,19 @@ public class TableTest
 		assertFalse(this.table.canDefendWithCard(defendCardFour, attackCardThree));
 		assertTrue(this.table.canDefendWithCard(defendCardFive, attackCardThree));
 
-		assertEquals(3, this.table.getNotDefeatedCards().size());
+		assertEquals(3, this.table.getNotYetDefeatedCards().size());
 
 		this.table.defend(attackCardOne, defendCardOne);
 
-		assertEquals(2, this.table.getNotDefeatedCards().size());
+		assertEquals(2, this.table.getNotYetDefeatedCards().size());
 
 		this.table.defend(attackCardTwo, defendCardTwo);
 
-		assertEquals(1, this.table.getNotDefeatedCards().size());
+		assertEquals(1, this.table.getNotYetDefeatedCards().size());
 
 		this.table.defend(attackCardThree, defendCardFive);
 
-		assertEquals(0, this.table.getNotDefeatedCards().size());
+		assertEquals(0, this.table.getNotYetDefeatedCards().size());
 
 		assertEquals(defendCardOne, this.table.getDefendedCards().get(attackCardOne));
 		assertEquals(defendCardTwo, this.table.getDefendedCards().get(attackCardTwo));
@@ -142,7 +143,7 @@ public class TableTest
 	@Test
 	public void testFillUp()
 	{
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		int originalCardsOnDeck = this.table.getDeck().getRemainingCards();
 
@@ -172,7 +173,7 @@ public class TableTest
 		int notTrumpSuit1 = (Deck.trumpSuit + 2) % 4;
 		int notTrumpSuit2 = (Deck.trumpSuit + 3) % 4;
 
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		Card attack11 = new Card(notTrumpSuit1, 8);
 		Card attack12 = new Card(notTrumpSuit2, 8);
@@ -198,12 +199,12 @@ public class TableTest
 	@Test
 	public void testDefenderWins()
 	{
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		Card attackCard = Collections.min(attacker.getHand());
 		attacker.attackWith(attackCard);
 
-		Player defender = this.players.get(1);
+		AbstractPlayer defender = this.players.get(1);
 		Card defendCard = Collections.max(defender.getHand());
 
 		assertTrue(this.table.canDefendWithCard(defendCard, attackCard));
@@ -223,7 +224,7 @@ public class TableTest
 	@Test
 	public void attackerWins()
 	{
-		Player attacker = this.players.get(0);
+		AbstractPlayer attacker = this.players.get(0);
 
 		Card attackCard = attacker.getHand().get(new Random().nextInt(attacker.getHand().size()));
 
@@ -240,7 +241,7 @@ public class TableTest
 
 		this.table.endTurn();
 
-		Player defender = this.players.get(1);
+		AbstractPlayer defender = this.players.get(1);
 
 		int numberOfCardsPlayed = 1 + possibleCards.size();
 

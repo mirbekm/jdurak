@@ -17,6 +17,8 @@ public class TurnPanel extends JPanel
 	public static final int HEIGHT = 185;
 
 	private JButton btnSwitchPlayer = new JButton("switch player");
+	private JButton btnNextMove = new JButton("compute next move");
+
 	private JButton btnEndTurn = new JButton("end turn");
 
 	public TurnPanel(DurakActionListener actionListener)
@@ -33,12 +35,34 @@ public class TurnPanel extends JPanel
 		this.btnSwitchPlayer.addActionListener(actionListener);
 		this.btnSwitchPlayer.setActionCommand("" + DurakActionListener.ACTION_SWITCH_PLAYER);
 
+		this.btnNextMove.addActionListener(actionListener);
+		this.btnNextMove.setActionCommand("" + DurakActionListener.ACTION_NEXT_MOVE);
+
 		this.btnEndTurn.addActionListener(actionListener);
 		this.btnEndTurn.setActionCommand("" + DurakActionListener.ACTION_END_TURN);
 
-		this.add(this.btnSwitchPlayer, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.add(this.btnNextMove, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		//		this.add(this.btnSwitchPlayer, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnEndTurn, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 		this.setVisible(true);
+	}
+
+	public void newGame()
+	{
+		this.btnEndTurn.setVisible(false);
+		this.btnNextMove.setVisible(false);
+		this.btnEndTurn.setText("end turn");
+		this.btnNextMove.setText("compute next move");
+	}
+
+	public JButton getBtnEndTurn()
+	{
+		return this.btnEndTurn;
+	}
+
+	public JButton getBtnNextMove()
+	{
+		return this.btnNextMove;
 	}
 }
