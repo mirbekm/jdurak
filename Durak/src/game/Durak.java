@@ -21,7 +21,7 @@ public class Durak
 	 * @param rules
 	 *            The rules. Not <code>null</code>
 	 */
-	public void newGame(ArrayList<Player> players, Rules rules)
+	public void newGame(ArrayList<AbstractPlayer> players, Rules rules)
 	{
 		assert (players != null && players.size() > 1);
 		assert (rules != null);

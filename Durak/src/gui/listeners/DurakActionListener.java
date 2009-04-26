@@ -1,10 +1,13 @@
 package gui.listeners;
 
+import game.AbstractPlayer;
 import game.Card;
 import game.Durak;
 import game.Player;
 import game.Rules;
 import game.Table;
+import game.ai.AbstractAi;
+import game.ai.SimpleAi;
 import gui.DurakWindow;
 import gui.game.GuiCard;
 
@@ -21,6 +24,8 @@ public class DurakActionListener implements ActionListener
 	public static final int ACTION_END_TURN = 3;
 
 	public static final int ACTION_SWITCH_PLAYER = 4;
+
+	public static final int ACTION_NEXT_MOVE = 5;
 
 	private Durak durak;
 	private DurakWindow durakWindow;
@@ -57,6 +62,10 @@ public class DurakActionListener implements ActionListener
 		case ACTION_END_TURN:
 			this.endTurn();
 			break;
+
+		case ACTION_NEXT_MOVE:
+			this.nextMove();
+			break;
 		}
 	}
 
@@ -65,10 +74,13 @@ public class DurakActionListener implements ActionListener
 		String playerName = this.durakWindow.getWelcomePanel().getPlayerName();
 		int numberOfCards = this.durakWindow.getWelcomePanel().getNumberOfCards();
 
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<AbstractPlayer> players = new ArrayList<AbstractPlayer>();
 
 		players.add(new Player(this.durak, playerName));
-		players.add(new Player(this.durak, "Computer 1"));
+		//		players.add(new Player(this.durak, "Computer 1")); TODO uncomment for hot seat game
+		players.add(new SimpleAi(this.durak, "Computer 1"));
+
+		// TODO add more computers
 
 		this.durak.newGame(players, new Rules(numberOfCards));
 		this.durakWindow.showDurakPanel();
@@ -103,16 +115,127 @@ public class DurakActionListener implements ActionListener
 	{
 		Table table = this.durak.getTable();
 
-		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getActivePlayer());
-		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getActivePlayer());
+		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
+		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), this.durak.getTable().getPlayers().get(0));
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(this.durak.getTable().getDeck(), this.durak.getTable().getPlayers());
+
+		this.updateButtons();
+
+		this.durakWindow.repaint();
+	}
+
+	private void updateButtons()
+	{
+		//TODO only 1on1
+		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
+		AbstractPlayer player = this.durak.getTable().getPlayers().get(0);
+
+		if (player.isAttacker() && this.durak.getTable().getNumbersOnTable().isEmpty())
+		{
+			this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
+			this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
+
+			//TODO what about winning ?
+		}
+		else
+		{
+			if (player.isAttacker())
+			{
+				if (computer.wantsToPlayAnotherCard())
+				{
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
+				}
+				else
+				{
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(true);
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
+				}
+			}
+			else
+			{
+				if (this.durak.getTable().getNumbersOnTable().isEmpty())
+				{
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
+				}
+				else
+				{
+					if (this.durak.getTable().getNotYetDefeatedCards().isEmpty())
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn");
+					else
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn - take cards");
+
+					if (computer.wantsToPlayAnotherCard())
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
+					else
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(true);
+
+					if (computer.wantsToPlayAnotherCard())
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
+					else
+						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
+				}
+			}
+		}
 	}
 
 	private void endTurn()
 	{
-		this.durak.getTable().endTurn();
+		//TODO only 1on1
+
+		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
+
+		if (computer.wantsToPlayAnotherCard())
+		{
+			// TODO proper notification
+			System.out.println("computer is not finished yet!");
+		}
+		else
+		{
+			this.durak.getTable().endTurn();
+			this.updateDisplay();
+			this.durakWindow.getDurakPanel().getTablePanel().endTurn();
+		}
+	}
+
+	private void nextMove()
+	{
+		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
+
+		//		ArrayList<Card> hand = computer.getHand();
+		//		Collections.sort(hand);
+		//		System.out.println("Computer - isAttacker: " + computer.isAttacker());
+		//		System.out.println(hand);
+		//		System.out.println(computer.wantsToPlayAnotherCard());
+		//		Card[] defense = computer.getNextDefendCard();
+		//		if (defense != null)
+		//			System.out.println(defense[0] + " < " + defense[1]);
+
+		if (computer.isAttacker())
+		{
+			while (computer.wantsToPlayAnotherCard())
+			{
+				Card attackCard = computer.getNextAttackCard();
+				if (attackCard != null)
+					computer.attackWith(attackCard);
+				else
+					System.err.println("problem with attack method in ai"); // TODO proper error message
+			}
+		}
+		else
+		{
+			while (computer.wantsToPlayAnotherCard())
+			{
+				Card[] defense = computer.getNextDefendCard();
+				if (defense != null && defense.length == 2)
+					this.durak.getTable().defend(defense[0], defense[1]);
+				else
+					System.err.println("problem with defense method in ai"); // TODO proper error
+			}
+		}
+
 		this.updateDisplay();
-		this.durakWindow.getDurakPanel().getTablePanel().endTurn();
 	}
 
 	public boolean canDefendWithCard(Card defendingCard, Card cardToBeDefeated)

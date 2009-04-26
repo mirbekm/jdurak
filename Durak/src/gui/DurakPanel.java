@@ -56,6 +56,7 @@ public class DurakPanel extends JPanel
 		this.handPanel.updateDisplay(table.getActivePlayer());
 		this.deckPanel.updateDisplay(table.getDeck(), table.getPlayers());
 		this.tablePanel.newGame(table.getPlayers(), table.getActivePlayer());
+		this.turnPanel.newGame();
 	}
 
 	public HandPanel getHandPanel()
@@ -71,5 +72,10 @@ public class DurakPanel extends JPanel
 	public DeckPanel getDeckPanel()
 	{
 		return this.deckPanel;
+	}
+
+	public TurnPanel getTurnPanel()
+	{
+		return this.turnPanel;
 	}
 }

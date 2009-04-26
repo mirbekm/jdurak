@@ -1,7 +1,7 @@
 package gui.game;
 
+import game.AbstractPlayer;
 import game.Deck;
-import game.Player;
 import gui.helpers.CardManager;
 import gui.helpers.Colors;
 
@@ -100,7 +100,7 @@ public class DeckPanel extends JPanel
 		stack.repaint();
 	}
 
-	public void updateDisplay(Deck deck, List<Player> players)
+	public void updateDisplay(Deck deck, List<AbstractPlayer> players)
 	{
 		//TODO remove syso
 		System.out.println("test " + deck + " " + players);

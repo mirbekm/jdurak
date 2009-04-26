@@ -1,5 +1,6 @@
 package gui;
 
+import game.Rules;
 import gui.helpers.Colors;
 import gui.listeners.DurakActionListener;
 
@@ -85,12 +86,12 @@ public class WelcomePanel extends JPanel
 
 		JLabel lblNumberOfCards = new JLabel("Cards: ");
 
-		this.sldNumberOfCards = new JSlider(36, 56, 36);
+		this.sldNumberOfCards = new JSlider(Rules.MIN_AMOUNT_OF_CARDS, Rules.MAX_AMOUNT_OF_CARDS, Rules.MIN_AMOUNT_OF_CARDS);
 		this.sldNumberOfCards.setSnapToTicks(true);
 		this.sldNumberOfCards.setPaintTicks(true);
 		this.sldNumberOfCards.setMinorTickSpacing(4);
 
-		this.chkTransfer = new JCheckBox("transfer");
+		this.chkTransfer = new JCheckBox("allow transfer");
 		this.chkTransfer.setEnabled(false);
 
 		panelRules.add(lblNumberOfCards, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -118,7 +119,7 @@ public class WelcomePanel extends JPanel
 
 	public String getPlayerName()
 	{
-		if (!this.txtPlayerOne.getText().isEmpty())
+		if (!this.txtPlayerOne.getText().trim().isEmpty())
 			return this.txtPlayerOne.getText();
 		return "Player 1";
 	}

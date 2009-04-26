@@ -47,6 +47,19 @@ public class DeckAndCardTest
 		assertTrue(new Card(Deck.trumpSuit, 2).isGreaterThan(greaterCard));
 		assertTrue(new Card(Deck.trumpSuit, 10).isGreaterThan(greaterCard));
 		assertTrue(new Card(Deck.trumpSuit, 14).isGreaterThan(greaterCard));
+
+		lowerCard = new Card(notTrumpSuit, 7);
+		greaterCard = new Card(notTrumpSuit, 8);
+
+		assertTrue(greaterCard.isGreaterThan(lowerCard));
+
+		greaterCard = new Card(notTrumpSuit, 14);
+		otherCard = new Card((Deck.trumpSuit + 3) % 4, 2);
+
+		assertTrue(greaterCard.compareTo(otherCard) < 0);
+
+		assertTrue(new Card(notTrumpSuit, 7).compareTo(new Card(Deck.trumpSuit, 7)) < 0);
+
 	}
 
 	@Test
