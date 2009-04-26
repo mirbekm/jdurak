@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * The most important part of the game. Most of the game logic is provided by the table
  * 
  * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
  * @version $Date$ - Revision: $Rev$
@@ -29,14 +30,27 @@ public class Table
 	private HashMap<Card, Card> defendedCards;
 	private HashSet<Integer> numbersOnTable;
 
+	/**
+	 * Create a new table
+	 * 
+	 * @param players
+	 *            The players. The size has to be >= 2
+	 * @param durak
+	 *            The reference to the durak game
+	 */
 	public Table(ArrayList<AbstractPlayer> players, Durak durak)
 	{
+		assert (players.size() >= 2);
+
 		this.durak = durak;
 		this.players = players;
 
 		this.newGame();
 	}
 
+	/**
+	 * Start a new game. Reset all lists etc. Choose the new active player.
+	 */
 	public void newGame()
 	{
 		this.attackers = new ArrayList<AbstractPlayer>();
@@ -66,11 +80,19 @@ public class Table
 		this.numbersOnTable = new HashSet<Integer>();
 	}
 
+	/**
+	 * 
+	 * @return the list of cards from attacker one, that are on the table
+	 */
 	public List<Card> getCardsOfAttackerOneOnTable()
 	{
 		return Collections.unmodifiableList(this.cardsOfAttackerOneOnTable);
 	}
 
+	/**
+	 * 
+	 * @return the list of cards from attacker two, that are on the table
+	 */
 	public List<Card> getCardsOfAttackerTwoOnTable()
 	{
 		if (this.attackers.size() > 1)
@@ -79,11 +101,23 @@ public class Table
 			return null;
 	}
 
+	/**
+	 * 
+	 * @return the list of defended cards with its defenders
+	 */
 	public Map<Card, Card> getDefendedCards()
 	{
 		return Collections.unmodifiableMap(this.defendedCards);
 	}
 
+	/**
+	 * defend a card
+	 * 
+	 * @param cardToBeDefeated
+	 *            The card that has to be defeated
+	 * @param cardDefendingWith
+	 *            The card the player is defending with
+	 */
 	public void defend(Card cardToBeDefeated, Card cardDefendingWith)
 	{
 		assert (cardToBeDefeated != null & cardDefendingWith != null);
@@ -145,6 +179,14 @@ public class Table
 		}
 	}
 
+	/**
+	 * attack with a card
+	 * 
+	 * @param attackingCard
+	 *            the attacking card
+	 * @param attackingPlayer
+	 *            the player that is attacking
+	 */
 	public void attack(Card attackingCard, AbstractPlayer attackingPlayer)
 	{
 		assert (attackingCard != null);
@@ -172,6 +214,12 @@ public class Table
 
 	}
 
+	/**
+	 * 
+	 * @param card
+	 *            The card that the player is trying to attack with
+	 * @return <code>true</code> if the player can attack with the card
+	 */
 	public boolean canAttackWithThisCard(Card card)
 	{
 		return this.numbersOnTable.contains(card.getNumber()) || this.numbersOnTable.isEmpty();

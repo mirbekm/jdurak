@@ -112,7 +112,7 @@ public class DeckPanel extends JPanel
 		JLabel lblRole = new JLabel("<html><b>role</b></html>");
 		JLabel lblPlayerCardsLeft = new JLabel("<html><b>cards</b></html>");
 
-		//		this.playerInfo.removeAll();
+		this.playerInfo.removeAll();
 
 		this.playerInfo.add(lblPlayerName, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
 		this.playerInfo.add(lblRole, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
