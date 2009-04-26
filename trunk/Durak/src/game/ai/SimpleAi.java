@@ -5,6 +5,7 @@ import game.Durak;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SimpleAi extends AbstractAi
@@ -37,16 +38,19 @@ public class SimpleAi extends AbstractAi
 	@Override
 	public Card getNextAttackCard()
 	{
+
 		if (this.possibleCards.isEmpty() || !this.isAttacker)
 			return null;
 		else
-			return Collections.min(this.possibleCards);
+			return Collections.min(this.possibleCards, new CardComparator());
 	}
 
 	@Override
 	public boolean wantsToPlayAnotherCard()
 	{
 		this.resetLists();
+
+		// TODO don't give away trumps so easily
 
 		if (this.hand.isEmpty()) // no remaining cards
 			return false;
@@ -71,7 +75,7 @@ public class SimpleAi extends AbstractAi
 		{
 			for (Card cardToBeDefeated : this.durak.getTable().getNotYetDefeatedCards())
 				for (Card cardOnHand : this.hand)
-					if (cardOnHand.compareTo(cardToBeDefeated) > 0)
+					if (cardOnHand.isGreaterThan(cardToBeDefeated))
 						this.possibleCards.add(cardOnHand);
 
 		}
@@ -81,5 +85,28 @@ public class SimpleAi extends AbstractAi
 	private void resetLists()
 	{
 		this.possibleCards = new ArrayList<Card>();
+	}
+
+	private class CardComparator implements Comparator<Card>
+	{
+
+		@Override
+		public int compare(Card cardOne, Card cardTwo)
+		{
+			if (cardOne.getNumber() == cardTwo.getNumber() && cardOne.getSuit() == cardTwo.getSuit())
+				return 0;
+
+			if (cardOne.isTrump() && !cardTwo.isTrump())
+				return 1;
+			else if (!cardOne.isTrump() && cardTwo.isTrump())
+				return -1;
+			else if (cardOne.isTrump() && cardTwo.isTrump())
+				return (cardOne.getNumber() > cardTwo.getNumber()) ? 1 : -1;
+
+			if (cardOne.getNumber() == cardTwo.getNumber())
+				return 0;
+			else
+				return (cardOne.getNumber() > cardTwo.getNumber()) ? 1 : -1;
+		}
 	}
 }

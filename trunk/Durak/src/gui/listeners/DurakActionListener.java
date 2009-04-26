@@ -27,6 +27,8 @@ public class DurakActionListener implements ActionListener
 
 	public static final int ACTION_NEXT_MOVE = 5;
 
+	public static final int ACTION_UPDATE_DISPLAY = 6;
+
 	private Durak durak;
 	private DurakWindow durakWindow;
 
@@ -65,6 +67,10 @@ public class DurakActionListener implements ActionListener
 
 		case ACTION_NEXT_MOVE:
 			this.nextMove();
+			break;
+
+		case ACTION_UPDATE_DISPLAY:
+			this.updateDisplay();
 			break;
 		}
 	}
@@ -116,10 +122,15 @@ public class DurakActionListener implements ActionListener
 		Table table = this.durak.getTable();
 
 		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
-		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), this.durak.getTable().getPlayers().get(0));
+		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), this.durak.getTable().getAttackers());
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(this.durak.getTable().getDeck(), this.durak.getTable().getPlayers());
 
 		this.updateButtons();
+
+		// TODO 1on1 only atm
+		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
+		if (this.durakWindow.getDurakPanel().getTurnPanel().autoReply() && computer.wantsToPlayAnotherCard())
+			this.nextMove();
 
 		this.durakWindow.repaint();
 	}
@@ -189,13 +200,13 @@ public class DurakActionListener implements ActionListener
 		if (computer.wantsToPlayAnotherCard())
 		{
 			// TODO proper notification
-			System.out.println("computer is not finished yet!");
+			System.err.println("computer is not finished yet!");
 		}
 		else
 		{
 			this.durak.getTable().endTurn();
-			this.updateDisplay();
 			this.durakWindow.getDurakPanel().getTablePanel().endTurn();
+			this.updateDisplay();
 		}
 	}
 
@@ -254,7 +265,7 @@ public class DurakActionListener implements ActionListener
 
 		if (this.durak.getTable().canAttackWithThisCard(card))
 		{
-			this.durak.getTable().attack(card);
+			this.durak.getTable().getActivePlayer().attackWith(card);
 			this.updateDisplay();
 		}
 	}

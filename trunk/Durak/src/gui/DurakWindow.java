@@ -36,6 +36,7 @@ public class DurakWindow extends JFrame
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setLookAndFeel();
 
+		Durak durak = new Durak();
 		this.actionListener = new DurakActionListener(new Durak(), this);
 		this.welcomePanel = new WelcomePanel(this.actionListener);
 		this.durakPanel = new DurakPanel(this.actionListener);

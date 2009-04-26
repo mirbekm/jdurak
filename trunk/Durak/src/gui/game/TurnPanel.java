@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 public class TurnPanel extends JPanel
@@ -20,6 +21,8 @@ public class TurnPanel extends JPanel
 	private JButton btnNextMove = new JButton("compute next move");
 
 	private JButton btnEndTurn = new JButton("end turn");
+
+	private JCheckBox chkAutoReply = new JCheckBox("auto reply");
 
 	public TurnPanel(DurakActionListener actionListener)
 	{
@@ -41,6 +44,10 @@ public class TurnPanel extends JPanel
 		this.btnEndTurn.addActionListener(actionListener);
 		this.btnEndTurn.setActionCommand("" + DurakActionListener.ACTION_END_TURN);
 
+		this.chkAutoReply.addActionListener(actionListener);
+		this.chkAutoReply.setActionCommand("" + DurakActionListener.ACTION_UPDATE_DISPLAY);
+
+		this.add(this.chkAutoReply, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnNextMove, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		//		this.add(this.btnSwitchPlayer, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnEndTurn, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -50,6 +57,7 @@ public class TurnPanel extends JPanel
 
 	public void newGame()
 	{
+		this.chkAutoReply.setSelected(false);
 		this.btnEndTurn.setVisible(false);
 		this.btnNextMove.setVisible(false);
 		this.btnEndTurn.setText("end turn");
@@ -64,5 +72,10 @@ public class TurnPanel extends JPanel
 	public JButton getBtnNextMove()
 	{
 		return this.btnNextMove;
+	}
+
+	public boolean autoReply()
+	{
+		return this.chkAutoReply.isSelected();
 	}
 }
