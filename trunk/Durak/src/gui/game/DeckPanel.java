@@ -1,10 +1,13 @@
 package gui.game;
 
 import game.AbstractPlayer;
+import game.Card;
 import game.Deck;
+import gui.WelcomePanel;
 import gui.helpers.CardManager;
 import gui.helpers.Colors;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -77,36 +80,42 @@ public class DeckPanel extends JPanel
 		JLabel backCard = new JLabel(new ImageIcon(CardManager.getInstance().getBackOfCard()));
 		backCard.setBounds(0, 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
 
-		stack.removeAll();
+		this.stack.removeAll();
 
 		if (deck.getRemainingCards() > 1)
-			stack.add(backCard, 0);
-		else
+			this.stack.add(backCard, 0);
+		else if (deck.getRemainingCards() != 1)
 		{
 			JLabel slot = new JLabel(CardManager.getSlot());
 			slot.setBounds(0, 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-			stack.add(slot);
+			this.stack.add(slot);
 		}
 
 		if (deck.hasRemainingCards())
 		{
 			GuiCard lastCard = new GuiCard(deck.getLastCard());
 			lastCard.setCursor(Cursor.getDefaultCursor());
-			lastCard.setBounds(45, 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+			lastCard.setBounds((deck.getRemainingCards() != 1) ? 45 : 0, 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
 
-			stack.add(lastCard);
+			this.stack.add(lastCard);
 		}
 
-		stack.repaint();
+		this.stack.repaint();
 	}
 
 	public void updateDisplay(Deck deck, List<AbstractPlayer> players)
 	{
-		//TODO remove syso
-		System.out.println("test " + deck + " " + players);
+		// TODO why does sometimes this panel disappear 
 		this.displayStack(deck);
 		this.cardsLeft.setText("" + deck.getRemainingCards());
-		this.trump.setText(CardManager.getSuitName(Deck.trumpSuit));
+		this.trump.setText("<html><b>" + CardManager.getSuitNameAsUnicode(Deck.trumpSuit) + "</b></html>");
+
+		if (Deck.trumpSuit == Card.HEARTS || Deck.trumpSuit == Card.DIAMONDS)
+			this.trump.setForeground(new Color(204, 0, 0));
+		else
+			this.trump.setForeground(new Color(0, 0, 0));
+
+		this.trump.setToolTipText(CardManager.getSuitName(Deck.trumpSuit));
 
 		JLabel lblPlayerName = new JLabel("<html><b>name</b></html>");
 		JLabel lblRole = new JLabel("<html><b>role</b></html>");
@@ -114,21 +123,24 @@ public class DeckPanel extends JPanel
 
 		this.playerInfo.removeAll();
 
-		this.playerInfo.add(lblPlayerName, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		this.playerInfo.add(lblRole, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		this.playerInfo.add(lblPlayerCardsLeft, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		this.playerInfo.add(new JLabel(), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		this.playerInfo.add(lblPlayerName, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+		this.playerInfo.add(lblRole, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+		this.playerInfo.add(lblPlayerCardsLeft, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
 
 		for (int rowPanelPlayerInfo = 1; rowPanelPlayerInfo <= players.size(); rowPanelPlayerInfo++)
 		{
-			this.playerInfo.add(new JLabel(players.get(rowPanelPlayerInfo - 1).getName()), new GridBagConstraints(0, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+			this.playerInfo.add(new JLabel(WelcomePanel.PLAYER_ICONS[rowPanelPlayerInfo - 1]), new GridBagConstraints(0, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+
+			this.playerInfo.add(new JLabel(players.get(rowPanelPlayerInfo - 1).getName()), new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
 
 			// TODO player is not automatically a defender
 			if (players.get(rowPanelPlayerInfo - 1).isAttacker())
-				this.playerInfo.add(new JLabel("A"), new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+				this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/sword.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
 			else
-				this.playerInfo.add(new JLabel("D"), new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+				this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/shield_silver.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
 
-			this.playerInfo.add(new JLabel("" + players.get(rowPanelPlayerInfo - 1).getHand().size()), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+			this.playerInfo.add(new JLabel("" + players.get(rowPanelPlayerInfo - 1).getHand().size()), new GridBagConstraints(3, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
 		}
 
 		if (stack != null)

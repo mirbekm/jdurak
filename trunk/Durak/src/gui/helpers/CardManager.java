@@ -5,6 +5,7 @@ import game.Card;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -20,7 +21,7 @@ public class CardManager
 	{
 		try
 		{
-			this.cardMap = ImageIO.read(Object.class.getResourceAsStream("/images/cardmap.png"));
+			this.cardMap = ImageIO.read(this.getImageURL("images/cardmap.png"));
 		}
 		catch (IOException e)
 		{
@@ -51,7 +52,7 @@ public class CardManager
 
 	public static ImageIcon getSlot()
 	{
-		return new ImageIcon(Object.class.getResource("/images/slot.png"));
+		return getImageIcon("images/slot.png");
 	}
 
 	public static String getSuitName(int suit)
@@ -71,5 +72,34 @@ public class CardManager
 		}
 
 		return "";
+	}
+
+	public static String getSuitNameAsUnicode(int suit)
+	{
+		assert (suit >= 0 && suit < 4);
+
+		switch (suit)
+		{
+		case Card.CLUBS:
+			return "&#9827;";
+		case Card.DIAMONDS:
+			return "&#9830;";
+		case Card.HEARTS:
+			return "&#9829;";
+		case Card.SPADES:
+			return "&#9824;";
+		}
+
+		return "";
+	}
+
+	public static ImageIcon getImageIcon(String name)
+	{
+		return new ImageIcon(CardManager.getInstance().getImageURL(name));
+	}
+
+	public URL getImageURL(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
 	}
 }

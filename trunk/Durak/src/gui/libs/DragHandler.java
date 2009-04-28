@@ -171,32 +171,7 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	{
 		this.dragSource = dragSource;
 		this.supportedActions = actions;
-		String alpha = System.getProperty("DragHandler.alpha");
-		if (alpha != null)
-		{
-			try
-			{
-				ghostAlpha = Float.parseFloat(alpha);
-			}
-			catch (NumberFormatException e)
-			{
-			}
-		}
-		String max = System.getProperty("DragHandler.maxDragImageSize");
-		if (max != null)
-		{
-			String[] size = max.split("x");
-			if (size.length == 2)
-			{
-				try
-				{
-					maxGhostSize = new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1]));
-				}
-				catch (NumberFormatException e)
-				{
-				}
-			}
-		}
+
 		// Avoid having more than one gesture recognizer active
 		disableSwingDragSupport(dragSource);
 		DragSource src = DragSource.getDefaultDragSource();
@@ -394,14 +369,14 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	{
 		switch (actualAction)
 		{
-			case MOVE:	
-				return DragSource.DefaultMoveDrop;
-			case COPY:
-				return DragSource.DefaultCopyDrop;
-			case LINK:
-				return DragSource.DefaultLinkDrop;
-			default:
-				return DragSource.DefaultMoveNoDrop;
+		case MOVE:
+			return DragSource.DefaultMoveDrop;
+		case COPY:
+			return DragSource.DefaultCopyDrop;
+		case LINK:
+			return DragSource.DefaultLinkDrop;
+		default:
+			return DragSource.DefaultMoveNoDrop;
 		}
 	}
 
@@ -447,7 +422,7 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	{
 		if (!fixCursor)
 			return;
-		
+
 		Cursor cursor = getCursorForAction(adjustDropAction(ev));
 		ev.getDragSourceContext().setCursor(cursor);
 		if (ghost != null)

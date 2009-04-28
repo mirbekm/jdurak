@@ -1,6 +1,7 @@
 package gui;
 
 import game.Rules;
+import gui.helpers.CardManager;
 import gui.helpers.Colors;
 import gui.listeners.DurakActionListener;
 
@@ -11,6 +12,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -25,9 +27,10 @@ public class WelcomePanel extends JPanel
 {
 	private JTextField txtPlayerOne;
 	private JComboBox cmbComputerOne, cmbComputerTwo, cmbComputerThree,
-			cmbComputerFour, cmbComputerFive;
+			cmbComputerFour;
 	private JSlider sldNumberOfCards;
 	private JCheckBox chkTransfer;
+	public static final ImageIcon[] PLAYER_ICONS = { CardManager.getImageIcon("images/icons/user.png"), CardManager.getImageIcon("images/icons/user_green.png"), CardManager.getImageIcon("images/icons/user_orange.png"), CardManager.getImageIcon("images/icons/user_red.png"), CardManager.getImageIcon("images/icons/user_brown.png") };
 
 	public WelcomePanel(DurakActionListener actionListener)
 	{
@@ -52,29 +55,39 @@ public class WelcomePanel extends JPanel
 		panelPlayers.setBorder(panelPlayersBorder);
 
 		this.txtPlayerOne = new JTextField("Player 1");
-		this.cmbComputerOne = new JComboBox(new String[] { "Computer 1 - easy", "Computer 1 - normal", "Computer 1 - hard", "no player" });
+		JLabel playerIcon = new JLabel(WelcomePanel.PLAYER_ICONS[0]);
+
+		this.cmbComputerOne = new JComboBox(new String[] { "Computer 1 - easy", "Computer 1 - normal", "Computer 1 - hard" });
 		this.cmbComputerOne.setEnabled(false);
+		JLabel cmbComputerOneIcon = new JLabel(WelcomePanel.PLAYER_ICONS[1]);
+
 		this.cmbComputerTwo = new JComboBox(new String[] { "Computer 2 - easy", "Computer 2 - normal", "Computer 2 - hard", "no player" });
 		this.cmbComputerTwo.setSelectedIndex(3);
 		this.cmbComputerTwo.setEnabled(false);
+		JLabel cmbComputerTwoIcon = new JLabel(WelcomePanel.PLAYER_ICONS[2]);
+
 		this.cmbComputerThree = new JComboBox(new String[] { "Computer 3 - easy", "Computer 3 - normal", "Computer 3 - hard", "no player" });
 		this.cmbComputerThree.setSelectedIndex(3);
 		this.cmbComputerThree.setEnabled(false);
+		JLabel cmbComputerThreeIcon = new JLabel(WelcomePanel.PLAYER_ICONS[3]);
+
 		this.cmbComputerFour = new JComboBox(new String[] { "Computer 4 - easy", "Computer 4 - normal", "Computer 4 - hard", "no player" });
 		this.cmbComputerFour.setSelectedIndex(3);
 		this.cmbComputerFour.setEnabled(false);
-		this.cmbComputerFive = new JComboBox(new String[] { "Computer 5 - easy", "Computer 5 - normal", "Computer 5 - hard", "no player" });
-		this.cmbComputerFive.setSelectedIndex(3);
-		this.cmbComputerFive.setEnabled(false);
+		JLabel cmbComputerFourIcon = new JLabel(WelcomePanel.PLAYER_ICONS[4]);
 
 		int rowPanelPlayers = 0;
 
-		panelPlayers.add(this.txtPlayerOne, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.cmbComputerOne, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.cmbComputerTwo, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.cmbComputerThree, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.cmbComputerFour, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.cmbComputerFive, new GridBagConstraints(0, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(playerIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(this.txtPlayerOne, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+		panelPlayers.add(cmbComputerOneIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(this.cmbComputerOne, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(cmbComputerTwoIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(this.cmbComputerTwo, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(cmbComputerThreeIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(this.cmbComputerThree, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(cmbComputerFourIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+		panelPlayers.add(this.cmbComputerFour, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
 
 		JPanel panelRules = new JPanel(new GridBagLayout());
 

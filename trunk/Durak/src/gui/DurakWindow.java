@@ -2,13 +2,13 @@ package gui;
 
 import game.Durak;
 import game.Table;
+import gui.helpers.CardManager;
 import gui.listeners.DurakActionListener;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -27,16 +27,15 @@ public class DurakWindow extends JFrame
 
 	public DurakWindow()
 	{
-		super("Durak - 0.01a");
+		super("JDurak - 0.01a");
 		this.setMinimumSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
 		this.setPreferredSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
 
-		this.setIconImage(new ImageIcon(Object.class.getResource("/images/icons/durak.png")).getImage());
+		this.setIconImage(CardManager.getImageIcon("images/icons/durak.png").getImage());
 
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setLookAndFeel();
 
-		Durak durak = new Durak();
 		this.actionListener = new DurakActionListener(new Durak(), this);
 		this.welcomePanel = new WelcomePanel(this.actionListener);
 		this.durakPanel = new DurakPanel(this.actionListener);
@@ -49,7 +48,6 @@ public class DurakWindow extends JFrame
 
 		this.pack();
 
-		//		super.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (super.getSize().width / 2), (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (super.getSize().height / 2));
 		this.setVisible(true);
 	}
 
@@ -114,13 +112,13 @@ public class DurakWindow extends JFrame
 			JMenu menuGame = new JMenu("Game");
 			menuGame.setMnemonic('G');
 
-			JMenuItem newGame = new JMenuItem("New", new ImageIcon(Object.class.getResource("/images/icons/durak.png")));
+			JMenuItem newGame = new JMenuItem("New", CardManager.getImageIcon("images/icons/durak.png"));
 			newGame.setMnemonic('N');
 			newGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 			newGame.addActionListener(actionListener);
 			newGame.setActionCommand("" + DurakActionListener.ACTION_SHOW_SETTINGS);
 
-			JMenuItem quitGame = new JMenuItem("Exit", new ImageIcon(Object.class.getResource("/images/icons/bullet_cross.png")));
+			JMenuItem quitGame = new JMenuItem("Exit", CardManager.getImageIcon("images/icons/bullet_cross.png"));
 			quitGame.setMnemonic('X');
 			quitGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 			quitGame.setActionCommand("" + DurakActionListener.ACTION_QUIT);
