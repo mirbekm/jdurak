@@ -9,19 +9,19 @@ package game;
 public class Card implements Comparable<Card>
 {
 	/**
-	 * The identifier for <b>clubs</>
+	 * The identifier for <b>clubs</b> &clubs;
 	 */
 	public static final int CLUBS = 0;
 	/**
-	 * The identifier for <b>diamonds</b>
+	 * The identifier for <b>diamonds</b> &diams;
 	 */
 	public static final int DIAMONDS = 1;
 	/**
-	 * The identifier for <b>hearts</b>
+	 * The identifier for <b>hearts</b> &hearts;
 	 */
 	public static final int HEARTS = 2;
 	/**
-	 * The identifier for <b>spades</b>
+	 * The identifier for <b>spades</b> &spades;
 	 */
 	public static final int SPADES = 3;
 
@@ -84,10 +84,19 @@ public class Card implements Comparable<Card>
 	@Override
 	public int compareTo(Card anotherCard)
 	{
-		if (this.number == anotherCard.getNumber() && this.suit == anotherCard.getSuit())
-			return 0;
+		int thisValue = (this.isTrump()) ? 900 + this.number : this.getSuitAndNumber();
+		int anotherCardValue = (anotherCard.isTrump()) ? 900 + anotherCard.getNumber() : anotherCard.getSuitAndNumber();
 
-		return this.isGreaterThan(anotherCard) ? 1 : -1;
+		return thisValue - anotherCardValue;
+
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Card)
+			return this.number == ((Card) obj).getNumber() && this.suit == ((Card) obj).getSuit();
+		return super.equals(obj);
 	}
 
 	/**
@@ -108,9 +117,7 @@ public class Card implements Comparable<Card>
 		int thisValue = (this.isTrump()) ? 900 + this.number : this.getSuitAndNumber();
 		int anotherCardValue = (anotherCard.isTrump()) ? 900 + anotherCard.getNumber() : anotherCard.getSuitAndNumber();
 
-		if (this.isTrump())
-			return thisValue > anotherCardValue;
-		else if (this.getSuit() == anotherCard.getSuit())
+		if (this.isTrump() || this.getSuit() == anotherCard.getSuit())
 			return thisValue > anotherCardValue;
 		else
 			return false;

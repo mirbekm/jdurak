@@ -10,6 +10,7 @@ import game.ai.AbstractAi;
 import game.ai.SimpleAi;
 import gui.DurakWindow;
 import gui.game.GuiCard;
+import gui.helpers.CardManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -121,9 +122,9 @@ public class DurakActionListener implements ActionListener
 	{
 		Table table = this.durak.getTable();
 
-		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
-		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), this.durak.getTable().getAttackers());
-		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(this.durak.getTable().getDeck(), this.durak.getTable().getPlayers());
+		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
+		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getAttackers());
+		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers());
 
 		this.updateButtons();
 
@@ -172,10 +173,6 @@ public class DurakActionListener implements ActionListener
 				}
 				else
 				{
-					if (this.durak.getTable().getNotYetDefeatedCards().isEmpty())
-						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn");
-					else
-						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn - take cards");
 
 					if (computer.wantsToPlayAnotherCard())
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
@@ -186,6 +183,17 @@ public class DurakActionListener implements ActionListener
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
 					else
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
+				}
+
+				if (this.durak.getTable().getNotYetDefeatedCards().isEmpty())
+				{
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn");
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setIcon(CardManager.getImageIcon("images/icons/flag_green.png"));
+				}
+				else
+				{
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setText("end turn - take cards");
+					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setIcon(CardManager.getImageIcon("images/icons/arrow_turn_right.png"));
 				}
 			}
 		}

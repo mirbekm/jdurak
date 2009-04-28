@@ -18,7 +18,6 @@ import java.awt.dnd.DropTarget;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
@@ -44,21 +43,17 @@ public class TablePanel extends JTiledPanel
 
 	private TitledBorder borderPanelAttackerOne;
 
-	//	private AbstractPlayer activePlayer;
 	private AbstractPlayer humanPlayer;
 
 	public TablePanel(DurakActionListener actionListener)
 	{
-		super(new ImageIcon(Object.class.getResource("/images/baize.png")).getImage());
+		super(CardManager.getImageIcon("images/baize.png").getImage());
 
 		this.setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
 		this.setLayout(new GridBagLayout());
 		this.actionListener = actionListener;
-
-		this.layeredPanelAttackerOne = new JLayeredPane();
-		this.layeredPanelAttackerTwo = new JLayeredPane();
 
 		this.setVisible(true);
 	}
@@ -73,30 +68,47 @@ public class TablePanel extends JTiledPanel
 
 	public void newGame(List<AbstractPlayer> players, final AbstractPlayer activePlayer, final List<AbstractPlayer> attackers)
 	{
+		this.cardsFromAttackerOne = null;
+		this.cardsFromAttackerTwo = null;
+		this.defendedCards = null;
+
+		if (this.layeredPanelAttackerOne == null)
+			this.layeredPanelAttackerOne = new JLayeredPane();
+		else
+			this.layeredPanelAttackerOne.removeAll();
+
+		if (this.layeredPanelAttackerTwo == null)
+			this.layeredPanelAttackerTwo = new JLayeredPane();
+		else
+			this.layeredPanelAttackerTwo.removeAll();
+
 		this.humanPlayer = players.get(0);
 
-		this.panelAttackerOne = new JScrollPane(this.layeredPanelAttackerOne, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
-		{
-			private static final long serialVersionUID = 2966561330804255184L;
-
-			@Override
-			public void repaint()
+		if (this.panelAttackerOne == null)
+			this.panelAttackerOne = new JScrollPane(this.layeredPanelAttackerOne, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 			{
-				super.repaint();
-				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
-			}
-		};
-		this.panelAttackerTwo = new JScrollPane(this.layeredPanelAttackerTwo, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
-		{
-			private static final long serialVersionUID = -5128878109927587432L;
+				private static final long serialVersionUID = 2966561330804255184L;
 
-			@Override
-			public void repaint()
+				@Override
+				public void repaint()
+				{
+					super.repaint();
+					updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
+				}
+			};
+
+		if (this.panelAttackerTwo == null)
+			this.panelAttackerTwo = new JScrollPane(this.layeredPanelAttackerTwo, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 			{
-				super.repaint();
-				updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
-			}
-		};
+				private static final long serialVersionUID = -5128878109927587432L;
+
+				@Override
+				public void repaint()
+				{
+					super.repaint();
+					updateDisplay(cardsFromAttackerOne, cardsFromAttackerTwo, defendedCards, attackers);
+				}
+			};
 
 		panelAttackerOne.getViewport().setOpaque(false);
 		panelAttackerOne.setBackground(Colors.LIGHT_GREEN);
@@ -107,8 +119,8 @@ public class TablePanel extends JTiledPanel
 		this.dropTargetPanelAttackerOne = new DropTarget(this.panelAttackerOne, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerOne));
 		this.dropTargetPanelAttackerOne.setActive(false);
 
-		//TODO show correct name
 		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + activePlayer.getName());
+		//TODO show correct name
 		TitledBorder borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from Computer 2");
 
 		panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
@@ -118,10 +130,12 @@ public class TablePanel extends JTiledPanel
 
 		if (players.size() > 2)
 			this.add(panelAttackerTwo, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
 	}
 
 	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, List<AbstractPlayer> attackers)
 	{
+
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;
 		this.defendedCards = defendedCards;
@@ -134,17 +148,17 @@ public class TablePanel extends JTiledPanel
 				this.dropTargetPanelAttackerOne.setActive(false);
 		}
 
-		if (cardsFromAttackerOne != null && cardsFromAttackerOne.size() > 0)
+		if (cardsFromAttackerOne != null && !cardsFromAttackerOne.isEmpty())
 		{
 			this.updatePanel(this.layeredPanelAttackerOne, this.panelAttackerOne, cardsFromAttackerOne, defendedCards);
 		}
 
-		if (cardsFromAttackerTwo != null && cardsFromAttackerOne.size() > 0)
+		if (cardsFromAttackerTwo != null && !cardsFromAttackerOne.isEmpty())
 		{
 			// TODO make multiple opponents possible first
 		}
 
-		// TODO defeat me some cards baby
+		// TODO defeat me some cards baby - ???
 	}
 
 	private void updatePanel(JLayeredPane layeredPane, JScrollPane scrollPane, List<Card> cardsFromAttacker, Map<Card, Card> defendedCards)
@@ -159,7 +173,7 @@ public class TablePanel extends JTiledPanel
 
 		if (cardsAttackerOne > cardsPerRow * rows)
 		{
-			if (cardsAttackerOne % rows == 0) // TODO division by zero exception after restarting game
+			if (cardsAttackerOne % rows == 0)
 				cardsPerRow = cardsAttackerOne / rows;
 			else
 				cardsPerRow = (cardsAttackerOne / rows) + 1;

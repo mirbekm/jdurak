@@ -1,5 +1,6 @@
 package gui.game;
 
+import gui.helpers.CardManager;
 import gui.helpers.Colors;
 import gui.listeners.DurakActionListener;
 
@@ -22,7 +23,7 @@ public class TurnPanel extends JPanel
 
 	private JButton btnEndTurn = new JButton("end turn");
 
-	private JCheckBox chkAutoReply = new JCheckBox("auto reply");
+	private JCheckBox chkAutoReply = new JCheckBox("<html><b>auto reply</b></html>");
 
 	public TurnPanel(DurakActionListener actionListener)
 	{
@@ -40,12 +41,19 @@ public class TurnPanel extends JPanel
 
 		this.btnNextMove.addActionListener(actionListener);
 		this.btnNextMove.setActionCommand("" + DurakActionListener.ACTION_NEXT_MOVE);
+		this.btnNextMove.setIcon(CardManager.getImageIcon("images/icons/hourglass.png"));
 
 		this.btnEndTurn.addActionListener(actionListener);
 		this.btnEndTurn.setActionCommand("" + DurakActionListener.ACTION_END_TURN);
+		this.btnEndTurn.setIcon(CardManager.getImageIcon("images/icons/flag_green.png"));
 
 		this.chkAutoReply.addActionListener(actionListener);
 		this.chkAutoReply.setActionCommand("" + DurakActionListener.ACTION_UPDATE_DISPLAY);
+		//		this.chkAutoReply.setOpaque(false);
+		//		this.chkAutoReply.setBackground(Colors.DARK_GREEN);
+		this.chkAutoReply.setRolloverEnabled(false);
+		//		this.chkAutoReply.setFocusPainted(false);
+		this.chkAutoReply.setContentAreaFilled(false);
 
 		this.add(this.chkAutoReply, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnNextMove, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
