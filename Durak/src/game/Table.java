@@ -266,6 +266,11 @@ public class Table
 			// defender has won
 			this.resetLists();
 
+			for (AbstractPlayer player : this.attackers)
+				player.fillUp(this.deck);
+
+			this.defender.fillUp(this.deck);
+
 			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
 			this.activePlayer = this.players.get((numberOfActivePlayer + 1) % this.players.size());
 
@@ -274,6 +279,7 @@ public class Table
 			this.defender.setIsAttacker(false);
 
 			this.attackers.clear();
+
 			this.attackers.add(this.activePlayer);
 			// TODO add more attackers here
 		}
@@ -284,14 +290,16 @@ public class Table
 			this.defender.getHand().addAll(this.cardsOfAttackerOneOnTable);
 			this.defender.getHand().addAll(this.cardsOfAttackerTwoOnTable);
 
+			for (AbstractPlayer player : this.attackers)
+				player.fillUp(this.deck);
+
+			this.defender.fillUp(this.deck);
+
 			this.resetLists();
 
 			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
 			this.activePlayer = this.players.get((numberOfActivePlayer + 2) % this.players.size());
 		}
-
-		for (AbstractPlayer player : this.players)
-			player.fillUp(this.deck);
 	}
 
 	public HashSet<Integer> getNumbersOnTable()
