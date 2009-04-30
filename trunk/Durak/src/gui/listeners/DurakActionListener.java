@@ -16,18 +16,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class DurakActionListener implements ActionListener
 {
 	public static final int ACTION_NEW_GAME = 0;
 	public static final int ACTION_QUIT = 1;
 	public static final int ACTION_SHOW_SETTINGS = 2;
-
 	public static final int ACTION_END_TURN = 3;
-
 	public static final int ACTION_SWITCH_PLAYER = 4;
-
 	public static final int ACTION_NEXT_MOVE = 5;
-
 	public static final int ACTION_UPDATE_DISPLAY = 6;
 
 	private Durak durak;
@@ -122,6 +120,9 @@ public class DurakActionListener implements ActionListener
 	{
 		Table table = this.durak.getTable();
 
+		if (this.isGameOver())
+			this.notifyGameHasEnded();
+
 		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
 		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getAttackers());
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers());
@@ -199,23 +200,66 @@ public class DurakActionListener implements ActionListener
 		}
 	}
 
+	private boolean isGameOver()
+	{
+		if (this.durak.getTable().getDeck().hasRemainingCards())
+			return false;
+		else
+			for (AbstractPlayer player : this.durak.getTable().getPlayers())
+				if (player.getHand().size() == 0)
+					return true;
+
+		return false;
+	}
+
+	private void notifyGameHasEnded()
+	{
+		AbstractPlayer winningPlayer = null;
+		String winningText = "";
+
+		for (AbstractPlayer player : this.durak.getTable().getPlayers())
+			if (player.getHand().size() == 0)
+				if (winningPlayer == null)
+					winningPlayer = player;
+				else
+					; // draw ?
+
+		if (winningPlayer.equals(this.durak.getTable().getPlayers().get(0)))
+			winningText = "You have won!";
+		else
+			winningText = "You have lost! " + winningPlayer + " has won the match!";
+
+		Object[] options = { "quit game", "new game" };
+		int n = JOptionPane.showOptionDialog(this.durakWindow, winningText, "Game Over!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+
+		if (n == JOptionPane.YES_OPTION)
+			this.quit();
+		else
+			this.showSettings();
+	}
+
 	private void endTurn()
 	{
 		//TODO only 1on1
 
-		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
-
-		if (computer.wantsToPlayAnotherCard())
+		if (!this.isGameOver())
 		{
-			// TODO proper notification
-			System.err.println("computer is not finished yet!");
+			AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
+
+			if (computer.wantsToPlayAnotherCard())
+			{
+				// TODO proper notification
+				System.err.println("computer is not finished yet!");
+			}
+			else
+			{
+				this.durak.getTable().endTurn();
+				this.durakWindow.getDurakPanel().getTablePanel().endTurn();
+				this.updateDisplay();
+			}
 		}
 		else
-		{
-			this.durak.getTable().endTurn();
-			this.durakWindow.getDurakPanel().getTablePanel().endTurn();
-			this.updateDisplay();
-		}
+			this.notifyGameHasEnded();
 	}
 
 	private void nextMove()

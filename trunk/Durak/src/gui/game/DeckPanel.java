@@ -105,8 +105,9 @@ public class DeckPanel extends JPanel
 
 	public void updateDisplay(Deck deck, List<AbstractPlayer> players)
 	{
-		// TODO why does sometimes this panel disappear 
+		// TODO why does this panel sometimes disappear 
 		this.displayStack(deck);
+
 		this.cardsLeft.setText("" + deck.getRemainingCards());
 		this.trump.setText("<html><b>" + CardManager.getSuitNameAsUnicode(Deck.trumpSuit) + "</b></html>");
 
@@ -146,6 +147,6 @@ public class DeckPanel extends JPanel
 		if (stack != null)
 			stack.setToolTipText(deck.getRemainingCards() + " cards left on stack.");
 
-		//		this.playerInfo.repaint();
+		this.playerInfo.repaint();
 	}
 }
