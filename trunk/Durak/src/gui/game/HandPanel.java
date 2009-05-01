@@ -53,6 +53,9 @@ public class HandPanel extends JPanel
 
 		this.player = player;
 
+		//TODO remove syso
+		System.out.println(player);
+
 		ArrayList<Card> cards = player.getHand();
 
 		int panelWidth = (this.getWidth() == 0) ? WIDTH : this.getWidth();

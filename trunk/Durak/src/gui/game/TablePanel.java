@@ -40,6 +40,7 @@ public class TablePanel extends JTiledPanel
 	private DurakActionListener actionListener;
 
 	private DropTarget dropTargetPanelAttackerOne;
+	private DropTarget dropTargetPanelAttackerTwo;
 
 	private TitledBorder borderPanelAttackerOne;
 
@@ -115,12 +116,13 @@ public class TablePanel extends JTiledPanel
 		panelAttackerTwo.setBackground(Colors.LIGHT_GREEN);
 		panelAttackerTwo.getViewport().setOpaque(false);
 
-		// TODO add Drop Target ?
 		this.dropTargetPanelAttackerOne = new DropTarget(this.panelAttackerOne, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerOne));
 		this.dropTargetPanelAttackerOne.setActive(false);
+		//		this.dropTargetPanelAttackerTwo = new DropTarget(this.panelAttackerTwo, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerTwo));
+		//		this.dropTargetPanelAttackerTwo.setActive(false);
 
-		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + activePlayer.getName());
 		//TODO show correct name
+		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + activePlayer.getName());
 		TitledBorder borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from Computer 2");
 
 		panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
@@ -148,6 +150,14 @@ public class TablePanel extends JTiledPanel
 				this.dropTargetPanelAttackerOne.setActive(false);
 		}
 
+		if (this.dropTargetPanelAttackerTwo != null)
+		{
+			if (attackers.get(1) != null && attackers.get(1).isAttacker())
+				this.dropTargetPanelAttackerTwo.setActive(true);
+			else
+				this.dropTargetPanelAttackerTwo.setActive(false);
+		}
+
 		if (cardsFromAttackerOne != null && !cardsFromAttackerOne.isEmpty())
 		{
 			this.updatePanel(this.layeredPanelAttackerOne, this.panelAttackerOne, cardsFromAttackerOne, defendedCards);
@@ -155,7 +165,7 @@ public class TablePanel extends JTiledPanel
 
 		if (cardsFromAttackerTwo != null && !cardsFromAttackerOne.isEmpty())
 		{
-			// TODO make multiple opponents possible first
+			this.updatePanel(this.layeredPanelAttackerTwo, this.panelAttackerTwo, cardsFromAttackerTwo, defendedCards);
 		}
 
 		// TODO defeat me some cards baby - ???

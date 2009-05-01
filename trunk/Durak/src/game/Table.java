@@ -21,7 +21,6 @@ public class Table
 
 	private AbstractPlayer defender = null;
 	private ArrayList<AbstractPlayer> attackers = null;
-	private AbstractPlayer activePlayer = null;
 	private Durak durak;
 
 	private ArrayList<Card> cardsOfAttackerOneOnTable;
@@ -56,19 +55,51 @@ public class Table
 		this.attackers = new ArrayList<AbstractPlayer>();
 
 		this.deck = new Deck(this.durak.getRules().getNumberOfCardsPerSuit());
-		this.activePlayer = this.players.get(0);
-
-		//TODO lowest trump to start
-		this.attackers.add(this.players.get(0));
-		this.players.get(0).setIsAttacker(true);
-
-		this.defender = this.players.get(1);
-		this.players.get(1).setIsAttacker(false);
 
 		this.resetLists();
 
 		for (AbstractPlayer player : players)
 			player.newGame(this.deck);
+
+		Card currentLowestTrump = null;
+		AbstractPlayer playerToStart = null;
+		for (AbstractPlayer player : players)
+		{
+			if (currentLowestTrump == null)
+			{
+				currentLowestTrump = player.getLowestTrump();
+				playerToStart = player;
+			}
+			else if (player.getLowestTrump() != null && !player.getLowestTrump().isGreaterThan(currentLowestTrump))
+			{
+				currentLowestTrump = player.getLowestTrump();
+				playerToStart = player;
+			}
+		}
+
+		if (playerToStart == null)
+			playerToStart = players.get(0);
+
+		int indexOfPlayerToStart = this.players.indexOf(playerToStart);
+
+		this.attackers.add(playerToStart);
+		playerToStart.setIsAttacker(true);
+
+		this.defender = this.players.get((indexOfPlayerToStart + 1) % this.players.size());
+		this.defender.setIsAttacker(false);
+
+		if (this.players.size() > 2)
+		{
+			AbstractPlayer playerLeftToDefender = this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size());
+			AbstractPlayer playerRightToDefender = this.players.get((this.players.indexOf(this.defender) + 1) % this.players.size());
+
+			if (playerLeftToDefender.equals(playerToStart))
+				this.attackers.add(playerRightToDefender);
+			else
+				this.attackers.add(playerLeftToDefender);
+
+			this.attackers.get(1).setIsAttacker(true);
+		}
 	}
 
 	private void resetLists()
@@ -142,43 +173,6 @@ public class Table
 		}
 	}
 
-	@Deprecated
-	public void attack(Card attackingCard)
-	{
-		assert (attackingCard != null);
-
-		if (this.numbersOnTable.contains(attackingCard.getNumber()) || this.numbersOnTable.isEmpty())
-		{
-			AbstractPlayer attackingPlayer = null;
-			ArrayList<Card> cardsOfAttacker = null;
-
-			if (attackers.get(0).getHand().contains(attackingCard))
-			{
-				attackingPlayer = attackers.get(0);
-				cardsOfAttacker = this.cardsOfAttackerOneOnTable;
-			}
-			else if (attackers.size() > 1 && attackers.get(1).getHand().contains(attackingCard))
-			{
-				attackingPlayer = attackers.get(1);
-				cardsOfAttacker = this.cardsOfAttackerTwoOnTable;
-			}
-			else
-			{
-				// TODO the card has no owner
-			}
-
-			attackingPlayer.getHand().remove(attackingCard);
-			cardsOfAttacker.add(attackingCard);
-
-			if (this.numbersOnTable.isEmpty())
-				this.numbersOnTable.add(attackingCard.getNumber());
-		}
-		else
-		{
-			// TODO the card cannot be played because there is no card by this number
-		}
-	}
-
 	/**
 	 * attack with a card
 	 * 
@@ -222,7 +216,8 @@ public class Table
 	 */
 	public boolean canAttackWithThisCard(Card card)
 	{
-		return this.numbersOnTable.contains(card.getNumber()) || this.numbersOnTable.isEmpty();
+
+		return this.defender.getHand().size() - 1 - this.getNotYetDefeatedCards().size() >= 1 && (this.numbersOnTable.contains(card.getNumber()) || this.numbersOnTable.isEmpty());
 	}
 
 	public boolean canDefendWithCard(Card defendingCard, Card cardToBeDefeated)
@@ -245,22 +240,13 @@ public class Table
 		return Collections.unmodifiableList(attackers);
 	}
 
-	public AbstractPlayer getActivePlayer()
+	public AbstractPlayer getDefender()
 	{
-		return this.activePlayer;
-	}
-
-	public void switchPlayer()
-	{
-		int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
-		this.activePlayer = this.players.get((numberOfActivePlayer + 1) % this.players.size());
+		return this.defender;
 	}
 
 	public void endTurn()
 	{
-		//TODO choose right player - done?
-		//TODO game is for 2 players only atm
-
 		if (this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size())
 		{
 			// defender has won
@@ -271,17 +257,21 @@ public class Table
 
 			this.defender.fillUp(this.deck);
 
-			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
-			this.activePlayer = this.players.get((numberOfActivePlayer + 1) % this.players.size());
+			int indexOfOldDefender = this.players.indexOf(this.defender);
 
-			this.defender = this.players.get(numberOfActivePlayer);
-			this.activePlayer.setIsAttacker(true);
+			this.defender = this.players.get((indexOfOldDefender + 1) % this.players.size());
 			this.defender.setIsAttacker(false);
 
 			this.attackers.clear();
 
-			this.attackers.add(this.activePlayer);
-			// TODO add more attackers here
+			this.attackers.add(this.players.get((this.players.indexOf(this.defender) + 1) % this.players.size()));
+
+			if (this.players.size() > 2)
+				this.attackers.add(this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size()));
+
+			for (AbstractPlayer attacker : this.attackers)
+				attacker.setIsAttacker(true);
+
 		}
 		else
 		{
@@ -297,8 +287,15 @@ public class Table
 
 			this.resetLists();
 
-			int numberOfActivePlayer = this.players.indexOf(this.activePlayer);
-			this.activePlayer = this.players.get((numberOfActivePlayer + 2) % this.players.size());
+			this.attackers.clear();
+
+			this.attackers.add(this.players.get((this.players.indexOf(this.defender) + 1) % this.players.size()));
+
+			if (this.players.size() > 2)
+				this.attackers.add(this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size()));
+
+			for (AbstractPlayer attacker : this.attackers)
+				attacker.setIsAttacker(true);
 		}
 	}
 
@@ -315,9 +312,10 @@ public class Table
 			if (!defendedCards.containsKey(card))
 				notYetDefendedCards.add(card);
 
-		// TODO add player two
 		if (!this.cardsOfAttackerTwoOnTable.isEmpty())
-			System.err.println("see TODO!");
+			for (Card card : this.cardsOfAttackerTwoOnTable)
+				if (!defendedCards.containsKey(card))
+					notYetDefendedCards.add(card);
 
 		return Collections.unmodifiableList(notYetDefendedCards);
 	}

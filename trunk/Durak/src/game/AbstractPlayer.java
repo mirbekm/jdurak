@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The abstract player. All players have to derive from this class.
@@ -107,5 +108,25 @@ public abstract class AbstractPlayer
 		this.hand.remove(card);
 
 		return card;
+	}
+
+	public Card getLowestTrump()
+	{
+		if (this.hand.isEmpty())
+			return null;
+		else
+		{
+			ArrayList<Card> listOfTrumps = new ArrayList<Card>();
+			for (Card card : this.hand)
+			{
+				if (card.getSuit() == Deck.trumpSuit)
+					listOfTrumps.add(card);
+			}
+
+			if (listOfTrumps.isEmpty())
+				return null;
+			else
+				return Collections.min(listOfTrumps);
+		}
 	}
 }

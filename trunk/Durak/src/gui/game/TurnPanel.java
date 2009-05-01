@@ -18,7 +18,6 @@ public class TurnPanel extends JPanel
 	public static final int WIDTH = 225;
 	public static final int HEIGHT = 185;
 
-	private JButton btnSwitchPlayer = new JButton("switch player");
 	private JButton btnNextMove = new JButton("compute next move");
 
 	private JButton btnEndTurn = new JButton("end turn");
@@ -36,9 +35,6 @@ public class TurnPanel extends JPanel
 
 		int activeRow = 0;
 
-		this.btnSwitchPlayer.addActionListener(actionListener);
-		this.btnSwitchPlayer.setActionCommand("" + DurakActionListener.ACTION_SWITCH_PLAYER);
-
 		this.btnNextMove.addActionListener(actionListener);
 		this.btnNextMove.setActionCommand("" + DurakActionListener.ACTION_NEXT_MOVE);
 		this.btnNextMove.setIcon(CardManager.getImageIcon("images/icons/hourglass.png"));
@@ -49,15 +45,11 @@ public class TurnPanel extends JPanel
 
 		this.chkAutoReply.addActionListener(actionListener);
 		this.chkAutoReply.setActionCommand("" + DurakActionListener.ACTION_UPDATE_DISPLAY);
-		//		this.chkAutoReply.setOpaque(false);
-		//		this.chkAutoReply.setBackground(Colors.DARK_GREEN);
 		this.chkAutoReply.setRolloverEnabled(false);
-		//		this.chkAutoReply.setFocusPainted(false);
 		this.chkAutoReply.setContentAreaFilled(false);
 
 		this.add(this.chkAutoReply, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnNextMove, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		//		this.add(this.btnSwitchPlayer, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.add(this.btnEndTurn, new GridBagConstraints(0, activeRow++, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 		this.setVisible(true);

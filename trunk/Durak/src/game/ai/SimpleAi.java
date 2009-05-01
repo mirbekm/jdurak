@@ -17,6 +17,7 @@ public class SimpleAi extends AbstractAi
 		super(durak, name);
 	}
 
+	//FIXME can only throw new cards in if the player has enough cards to defeend with
 	@Override
 	public Card[] getNextDefendCard()
 	{
@@ -64,10 +65,9 @@ public class SimpleAi extends AbstractAi
 			else
 			{
 				// choose the possible cards and add them to the list
-				for (Integer numberOnTable : this.durak.getTable().getNumbersOnTable())
-					for (Card cardOnHand : this.hand)
-						if (cardOnHand.getNumber() == numberOnTable.intValue())
-							this.possibleCards.add(cardOnHand);
+				for (Card cardOnHand : this.hand)
+					if (this.durak.getTable().canAttackWithThisCard(cardOnHand))
+						this.possibleCards.add(cardOnHand);
 			}
 		}
 		// is defender
