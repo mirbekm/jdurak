@@ -19,6 +19,7 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+// FIXME test doesn't work no more because now the player with the lowest trump begins
 public class TableTest
 {
 	private Table table;
@@ -218,7 +219,7 @@ public class TableTest
 		assertEquals(this.rules.getNumberOfCardsPerPlayer(), attacker.getHand().size());
 		assertEquals(this.rules.getNumberOfCardsPerPlayer(), defender.getHand().size());
 
-		assertEquals(defender, this.table.getActivePlayer());
+		assertEquals(defender, this.table.getPlayers().get(0));
 	}
 
 	@Test
@@ -248,7 +249,7 @@ public class TableTest
 		assertEquals(this.rules.getNumberOfCardsPerPlayer(), attacker.getHand().size());
 		assertEquals(this.rules.getNumberOfCardsPerPlayer() + numberOfCardsPlayed, defender.getHand().size());
 
-		assertEquals(attacker, this.table.getActivePlayer());
+		assertEquals(attacker, this.table.getPlayers().get(0));
 	}
 
 }

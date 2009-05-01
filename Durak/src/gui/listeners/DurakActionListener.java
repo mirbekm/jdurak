@@ -24,7 +24,6 @@ public class DurakActionListener implements ActionListener
 	public static final int ACTION_QUIT = 1;
 	public static final int ACTION_SHOW_SETTINGS = 2;
 	public static final int ACTION_END_TURN = 3;
-	public static final int ACTION_SWITCH_PLAYER = 4;
 	public static final int ACTION_NEXT_MOVE = 5;
 	public static final int ACTION_UPDATE_DISPLAY = 6;
 
@@ -56,10 +55,6 @@ public class DurakActionListener implements ActionListener
 			this.showSettings();
 			break;
 
-		case ACTION_SWITCH_PLAYER:
-			this.switchPlayer();
-			break;
-
 		case ACTION_END_TURN:
 			this.endTurn();
 			break;
@@ -84,6 +79,7 @@ public class DurakActionListener implements ActionListener
 		players.add(new Player(this.durak, playerName));
 		//		players.add(new Player(this.durak, "Computer 1")); TODO uncomment for hot seat game
 		players.add(new SimpleAi(this.durak, "Computer 1"));
+		players.add(new SimpleAi(this.durak, "Computer 2"));
 
 		// TODO add more computers
 
@@ -110,12 +106,6 @@ public class DurakActionListener implements ActionListener
 		this.attackWith(guiCard.getCard());
 	}
 
-	private void switchPlayer()
-	{
-		this.durak.getTable().switchPlayer();
-		this.updateDisplay();
-	}
-
 	private void updateDisplay()
 	{
 		Table table = this.durak.getTable();
@@ -129,18 +119,40 @@ public class DurakActionListener implements ActionListener
 
 		this.updateButtons();
 
-		// TODO 1on1 only atm
-		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
-		if (this.durakWindow.getDurakPanel().getTurnPanel().autoReply() && computer.wantsToPlayAnotherCard())
+		boolean autoReply = this.durakWindow.getDurakPanel().getTurnPanel().autoReply();
+
+		if (autoReply && this.oneOfTheComputersWantsToMove())
 			this.nextMove();
 
 		this.durakWindow.repaint();
 	}
 
+	private ArrayList<AbstractAi> getComputers()
+	{
+		ArrayList<AbstractAi> computers = new ArrayList<AbstractAi>();
+
+		for (AbstractPlayer player : this.durak.getTable().getAttackers())
+			if (player instanceof AbstractAi)
+				computers.add((AbstractAi) player);
+
+		if (this.durak.getTable().getDefender() instanceof AbstractAi)
+			computers.add((AbstractAi) this.durak.getTable().getDefender());
+
+		return computers;
+	}
+
+	private boolean oneOfTheComputersWantsToMove()
+	{
+		boolean oneOfComputersWantsToMove = false;
+
+		for (AbstractAi ai : getComputers())
+			oneOfComputersWantsToMove |= ai.wantsToPlayAnotherCard();
+
+		return oneOfComputersWantsToMove;
+	}
+
 	private void updateButtons()
 	{
-		//TODO only 1on1
-		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
 		AbstractPlayer player = this.durak.getTable().getPlayers().get(0);
 
 		if (player.isAttacker() && this.durak.getTable().getNumbersOnTable().isEmpty())
@@ -154,7 +166,7 @@ public class DurakActionListener implements ActionListener
 		{
 			if (player.isAttacker())
 			{
-				if (computer.wantsToPlayAnotherCard())
+				if (this.oneOfTheComputersWantsToMove())
 				{
 					this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
 					this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
@@ -175,12 +187,12 @@ public class DurakActionListener implements ActionListener
 				else
 				{
 
-					if (computer.wantsToPlayAnotherCard())
+					if (this.oneOfTheComputersWantsToMove())
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
 					else
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(true);
 
-					if (computer.wantsToPlayAnotherCard())
+					if (this.oneOfTheComputersWantsToMove())
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(true);
 					else
 						this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
@@ -202,14 +214,16 @@ public class DurakActionListener implements ActionListener
 
 	private boolean isGameOver()
 	{
+		boolean gameOver = false;
+
 		if (this.durak.getTable().getDeck().hasRemainingCards())
 			return false;
 		else
 			for (AbstractPlayer player : this.durak.getTable().getPlayers())
 				if (player.getHand().size() == 0)
-					return true;
+					gameOver = true;
 
-		return false;
+		return gameOver && this.durak.getTable().getNotYetDefeatedCards().isEmpty();
 	}
 
 	private void notifyGameHasEnded()
@@ -225,7 +239,7 @@ public class DurakActionListener implements ActionListener
 					; // draw ?
 
 		if (winningPlayer.equals(this.durak.getTable().getPlayers().get(0)))
-			winningText = "You have won!";
+			winningText = "Congratulations! You have won!";
 		else
 			winningText = "You have lost! " + winningPlayer + " has won the match!";
 
@@ -244,11 +258,8 @@ public class DurakActionListener implements ActionListener
 
 		if (!this.isGameOver())
 		{
-			AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
-
-			if (computer.wantsToPlayAnotherCard())
+			if (this.oneOfTheComputersWantsToMove())
 			{
-				// TODO proper notification
 				System.err.println("computer is not finished yet!");
 			}
 			else
@@ -264,30 +275,27 @@ public class DurakActionListener implements ActionListener
 
 	private void nextMove()
 	{
-		AbstractAi computer = (AbstractAi) this.durak.getTable().getPlayers().get(1);
-
-		//		ArrayList<Card> hand = computer.getHand();
-		//		Collections.sort(hand);
-		//		System.out.println("Computer - isAttacker: " + computer.isAttacker());
-		//		System.out.println(hand);
-		//		System.out.println(computer.wantsToPlayAnotherCard());
-		//		Card[] defense = computer.getNextDefendCard();
-		//		if (defense != null)
-		//			System.out.println(defense[0] + " < " + defense[1]);
-
-		if (computer.isAttacker())
+		for (AbstractPlayer attacker : this.durak.getTable().getAttackers())
 		{
-			while (computer.wantsToPlayAnotherCard())
+			if (attacker instanceof AbstractAi)
 			{
-				Card attackCard = computer.getNextAttackCard();
-				if (attackCard != null)
-					computer.attackWith(attackCard);
-				else
-					System.err.println("problem with attack method in ai"); // TODO proper error message
+				AbstractAi computer = (AbstractAi) attacker;
+				while (computer.wantsToPlayAnotherCard())
+				{
+					Card attackCard = computer.getNextAttackCard();
+					if (attackCard != null)
+						computer.attackWith(attackCard);
+					else
+						System.err.println("problem with attack method in ai"); // TODO proper error message
+				}
+
 			}
 		}
-		else
+
+		if (this.durak.getTable().getDefender() instanceof AbstractAi)
 		{
+			AbstractAi computer = (AbstractAi) this.durak.getTable().getDefender();
+
 			while (computer.wantsToPlayAnotherCard())
 			{
 				Card[] defense = computer.getNextDefendCard();
@@ -315,9 +323,11 @@ public class DurakActionListener implements ActionListener
 	{
 		assert (card != null);
 
+		// TODO table.getPlayers().get(0) <- in mp games this should be the correct player not just the first in list
+
 		if (this.durak.getTable().canAttackWithThisCard(card))
 		{
-			this.durak.getTable().getActivePlayer().attackWith(card);
+			this.durak.getTable().getPlayers().get(0).attackWith(card);
 			this.updateDisplay();
 		}
 	}

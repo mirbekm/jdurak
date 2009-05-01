@@ -103,6 +103,8 @@ public class WelcomePanel extends JPanel
 		this.sldNumberOfCards.setSnapToTicks(true);
 		this.sldNumberOfCards.setPaintTicks(true);
 		this.sldNumberOfCards.setMinorTickSpacing(4);
+		this.sldNumberOfCards.setPaintLabels(true);
+		this.sldNumberOfCards.setLabelTable(this.sldNumberOfCards.createStandardLabels(4, Rules.MIN_AMOUNT_OF_CARDS));
 
 		this.chkTransfer = new JCheckBox("allow transfer");
 		this.chkTransfer.setEnabled(false);
