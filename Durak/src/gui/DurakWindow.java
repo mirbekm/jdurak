@@ -27,7 +27,7 @@ public class DurakWindow extends JFrame
 
 	public DurakWindow()
 	{
-		super("JDurak - 0.20b");
+		super("JDurak - 0.30b");
 		this.setMinimumSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
 		this.setPreferredSize(new Dimension(DurakPanel.WIDTH, DurakPanel.HEIGHT));
 

@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 
 public class DurakPanel extends JPanel
 {
-	public static final int WIDTH = 900;
-	public static final int HEIGHT = 650;
+	public static final int WIDTH = 950;
+	public static final int HEIGHT = 700;
 
 	private DeckPanel deckPanel;
 	private HandPanel handPanel;

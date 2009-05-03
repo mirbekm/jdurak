@@ -2,6 +2,7 @@ package gui.game;
 
 import game.AbstractPlayer;
 import game.Card;
+import game.CardComparatorSortByNumber;
 import gui.helpers.CardManager;
 import gui.listeners.CardDragSourceListener;
 import gui.listeners.DurakMouseListener;
@@ -22,8 +23,8 @@ import javax.swing.event.MouseInputAdapter;
 
 public class HandPanel extends JPanel
 {
-	public static final int WIDTH = 675;
-	public static final int HEIGHT = 185;
+	public static final int WIDTH = 700;
+	public static final int HEIGHT = 200;
 
 	private JLayeredPane handPane;
 	private HandPanelMouseListener mouseListener;
@@ -57,7 +58,10 @@ public class HandPanel extends JPanel
 
 		int panelWidth = (this.getWidth() == 0) ? WIDTH : this.getWidth();
 
-		Collections.sort(cards);
+		if (this.cardMouseListener.getDurakActionListener().getDurakWindow().getDurakPanel().getTurnPanel().sortBySuit())
+			Collections.sort(cards);
+		else
+			Collections.sort(cards, new CardComparatorSortByNumber());
 
 		int counter = 0;
 		int xOffset = 17;

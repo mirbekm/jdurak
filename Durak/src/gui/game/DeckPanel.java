@@ -23,8 +23,8 @@ import javax.swing.border.LineBorder;
 
 public class DeckPanel extends JPanel
 {
-	public static final int WIDTH = 225;
-	public static final int HEIGHT = 465;
+	public static final int WIDTH = 250;
+	public static final int HEIGHT = 500;
 
 	private JLayeredPane stack;
 
@@ -78,8 +78,9 @@ public class DeckPanel extends JPanel
 		this.pnlWinners.setBackground(Colors.LIGHT_GREEN);
 		this.pnlWinners.setBorder(new LineBorder(Colors.DARK_GREEN, 1));
 		this.pnlWinners.setVisible(false);
-		this.add(this.pnlWinners, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.add(this.pnlWinners, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
+		this.add(new JLabel(), new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
 		this.stack.setVisible(true);
 	}
 
