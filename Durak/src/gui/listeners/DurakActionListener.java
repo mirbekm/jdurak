@@ -91,6 +91,8 @@ public class DurakActionListener implements ActionListener
 		this.durak.newGame(players, new Rules(numberOfCards));
 		this.durakWindow.showDurakPanel();
 		this.durakWindow.newGame(this.durak.getTable());
+
+		this.nextMove();
 	}
 
 	private void quit()
