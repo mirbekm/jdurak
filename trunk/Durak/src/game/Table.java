@@ -102,6 +102,7 @@ public class Table
 
 			this.attackers.get(1).setIsAttacker(true);
 		}
+
 	}
 
 	private void resetLists()

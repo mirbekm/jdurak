@@ -80,7 +80,7 @@ public class TurnPanel extends JPanel
 
 	public void newGame()
 	{
-		this.chkAutoReply.setSelected(false);
+		this.chkAutoReply.setSelected(true);
 		this.btnEndTurn.setVisible(false);
 		this.btnNextMove.setVisible(false);
 		this.btnEndTurn.setText("end turn");
