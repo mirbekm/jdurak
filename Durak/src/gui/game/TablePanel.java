@@ -45,6 +45,7 @@ public class TablePanel extends JTiledPanel
 	private TitledBorder borderPanelAttackerOne;
 
 	private AbstractPlayer humanPlayer;
+	private TitledBorder borderPanelAttackerTwo;
 
 	public TablePanel(DurakActionListener actionListener)
 	{
@@ -118,12 +119,13 @@ public class TablePanel extends JTiledPanel
 
 		this.dropTargetPanelAttackerOne = new DropTarget(this.panelAttackerOne, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerOne));
 		this.dropTargetPanelAttackerOne.setActive(false);
+		// TODO add drop target?
 		//		this.dropTargetPanelAttackerTwo = new DropTarget(this.panelAttackerTwo, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerTwo));
 		//		this.dropTargetPanelAttackerTwo.setActive(false);
 
-		//TODO show correct name
-		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + activePlayer.getName());
-		TitledBorder borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from Computer 2");
+		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(0).getName());
+		if (attackers.size() == 2)
+			this.borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(1).getName());
 
 		panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
 		panelAttackerTwo.setViewportBorder(borderPanelAttackerTwo);
@@ -137,6 +139,9 @@ public class TablePanel extends JTiledPanel
 
 	public void updateDisplay(List<Card> cardsFromAttackerOne, List<Card> cardsFromAttackerTwo, Map<Card, Card> defendedCards, List<AbstractPlayer> attackers)
 	{
+		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(0).getName());
+		if (attackers.size() == 2)
+			this.borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(1).getName());
 
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;
@@ -163,7 +168,7 @@ public class TablePanel extends JTiledPanel
 			this.updatePanel(this.layeredPanelAttackerOne, this.panelAttackerOne, cardsFromAttackerOne, defendedCards);
 		}
 
-		if (cardsFromAttackerTwo != null && !cardsFromAttackerOne.isEmpty())
+		if (cardsFromAttackerTwo != null && !cardsFromAttackerTwo.isEmpty())
 		{
 			this.updatePanel(this.layeredPanelAttackerTwo, this.panelAttackerTwo, cardsFromAttackerTwo, defendedCards);
 		}
@@ -214,7 +219,7 @@ public class TablePanel extends JTiledPanel
 			}
 			else
 			{
-				if (!this.humanPlayer.isAttacker())
+				if (!this.humanPlayer.isAttacker()) // TODO doesnt do the trick if more than 3 players are playing. player still could throw cards in
 					new DropTarget(guiCard, new TableDropTargetListenerAsDefender(this.actionListener, guiCard));
 			}
 

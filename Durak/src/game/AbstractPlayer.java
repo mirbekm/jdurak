@@ -17,6 +17,7 @@ public abstract class AbstractPlayer
 	protected Durak durak;
 
 	protected boolean isAttacker = false;
+	private boolean isDefender;
 
 	/**
 	 * Create a new player with the given parameters
@@ -85,12 +86,32 @@ public abstract class AbstractPlayer
 	}
 
 	/**
+	 * Set if this player the defender
+	 * 
+	 * @param isAttacker
+	 *            <code>true</code> this player becomes one the defender
+	 */
+	public void setIsDefender(boolean isDefender)
+	{
+		this.isDefender = isDefender;
+	}
+
+	/**
 	 * 
 	 * @return <code>true</code> if the player is one of the attackers
 	 */
 	public boolean isAttacker()
 	{
 		return this.isAttacker;
+	}
+
+	/**
+	 * 
+	 * @return <code>true</code> if the player is the defender
+	 */
+	public boolean isDefender()
+	{
+		return this.isDefender;
 	}
 
 	@Override

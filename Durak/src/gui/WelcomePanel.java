@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,22 +60,22 @@ public class WelcomePanel extends JPanel
 		JLabel playerIcon = new JLabel(WelcomePanel.PLAYER_ICONS[0]);
 
 		this.cmbComputerOne = new JComboBox(new String[] { "Computer 1 - easy", "Computer 1 - normal", "Computer 1 - hard" });
-		this.cmbComputerOne.setEnabled(false);
+		//		this.cmbComputerOne.setEnabled(false);
 		JLabel cmbComputerOneIcon = new JLabel(WelcomePanel.PLAYER_ICONS[1]);
 
 		this.cmbComputerTwo = new JComboBox(new String[] { "Computer 2 - easy", "Computer 2 - normal", "Computer 2 - hard", "no player" });
 		this.cmbComputerTwo.setSelectedIndex(3);
-		this.cmbComputerTwo.setEnabled(false);
+		//		this.cmbComputerTwo.setEnabled(false);
 		JLabel cmbComputerTwoIcon = new JLabel(WelcomePanel.PLAYER_ICONS[2]);
 
 		this.cmbComputerThree = new JComboBox(new String[] { "Computer 3 - easy", "Computer 3 - normal", "Computer 3 - hard", "no player" });
 		this.cmbComputerThree.setSelectedIndex(3);
-		this.cmbComputerThree.setEnabled(false);
+		//		this.cmbComputerThree.setEnabled(false);
 		JLabel cmbComputerThreeIcon = new JLabel(WelcomePanel.PLAYER_ICONS[3]);
 
 		this.cmbComputerFour = new JComboBox(new String[] { "Computer 4 - easy", "Computer 4 - normal", "Computer 4 - hard", "no player" });
 		this.cmbComputerFour.setSelectedIndex(3);
-		this.cmbComputerFour.setEnabled(false);
+		//		this.cmbComputerFour.setEnabled(false);
 		JLabel cmbComputerFourIcon = new JLabel(WelcomePanel.PLAYER_ICONS[4]);
 
 		int rowPanelPlayers = 0;
@@ -144,4 +146,22 @@ public class WelcomePanel extends JPanel
 		return this.sldNumberOfCards.getValue();
 	}
 
+	public List<String> getComputers()
+	{
+		List<String> computers = new ArrayList<String>();
+
+		if (this.cmbComputerOne.getSelectedIndex() != 3)
+			computers.add((String) this.cmbComputerOne.getSelectedItem());
+
+		if (this.cmbComputerTwo.getSelectedIndex() != 3)
+			computers.add((String) this.cmbComputerTwo.getSelectedItem());
+
+		if (this.cmbComputerThree.getSelectedIndex() != 3)
+			computers.add((String) this.cmbComputerThree.getSelectedItem());
+
+		if (this.cmbComputerFour.getSelectedIndex() != 3)
+			computers.add((String) this.cmbComputerFour.getSelectedItem());
+
+		return computers;
+	}
 }

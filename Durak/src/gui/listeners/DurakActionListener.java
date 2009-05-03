@@ -77,9 +77,9 @@ public class DurakActionListener implements ActionListener
 		ArrayList<AbstractPlayer> players = new ArrayList<AbstractPlayer>();
 
 		players.add(new Player(this.durak, playerName));
-		//		players.add(new Player(this.durak, "Computer 1")); TODO uncomment for hot seat game
-		players.add(new SimpleAi(this.durak, "Computer 1"));
-		players.add(new SimpleAi(this.durak, "Computer 2"));
+
+		for (String name : this.durakWindow.getWelcomePanel().getComputers())
+			players.add(new SimpleAi(this.durak, name));
 
 		// TODO add more computers
 
@@ -110,12 +110,12 @@ public class DurakActionListener implements ActionListener
 	{
 		Table table = this.durak.getTable();
 
-		if (this.isGameOver())
+		if (this.durak.getTable().isGameOver())
 			this.notifyGameHasEnded();
 
-		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0)); // TODO change to getActivePlayerfor HotSeat
+		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0));
 		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getAttackers());
-		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers());
+		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers(), table.getWinners());
 
 		this.updateButtons();
 
@@ -212,20 +212,6 @@ public class DurakActionListener implements ActionListener
 		}
 	}
 
-	private boolean isGameOver()
-	{
-		boolean gameOver = false;
-
-		if (this.durak.getTable().getDeck().hasRemainingCards())
-			return false;
-		else
-			for (AbstractPlayer player : this.durak.getTable().getPlayers())
-				if (player.getHand().size() == 0)
-					gameOver = true;
-
-		return gameOver && this.durak.getTable().getNotYetDefeatedCards().isEmpty();
-	}
-
 	private void notifyGameHasEnded()
 	{
 		AbstractPlayer winningPlayer = null;
@@ -254,9 +240,7 @@ public class DurakActionListener implements ActionListener
 
 	private void endTurn()
 	{
-		//TODO only 1on1
-
-		if (!this.isGameOver())
+		if (!this.durak.getTable().isGameOver())
 		{
 			if (this.oneOfTheComputersWantsToMove())
 			{
@@ -324,7 +308,6 @@ public class DurakActionListener implements ActionListener
 		assert (card != null);
 
 		// TODO table.getPlayers().get(0) <- in mp games this should be the correct player not just the first in list
-
 		if (this.durak.getTable().canAttackWithThisCard(card))
 		{
 			this.durak.getTable().getPlayers().get(0).attackWith(card);
