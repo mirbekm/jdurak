@@ -32,6 +32,7 @@ public class DeckPanel extends JPanel
 	private JLabel trump;
 
 	private JPanel playerInfo;
+	private JPanel pnlWinners;
 
 	public DeckPanel()
 	{
@@ -53,9 +54,9 @@ public class DeckPanel extends JPanel
 		panelGameInfo.setBackground(Colors.LIGHT_GREEN);
 
 		JLabel lblCardsLeft = new JLabel("cards left: ");
-		cardsLeft = new JLabel("1");
+		cardsLeft = new JLabel("");
 		JLabel lblTrump = new JLabel("trump suit: ");
-		trump = new JLabel("2");
+		trump = new JLabel("");
 
 		panelGameInfo.add(lblCardsLeft, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
 		panelGameInfo.add(cardsLeft, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
@@ -70,7 +71,14 @@ public class DeckPanel extends JPanel
 		this.playerInfo.setBackground(Colors.LIGHT_GREEN);
 		this.playerInfo.setBorder(new LineBorder(Colors.DARK_GREEN, 1));
 
-		this.add(this.playerInfo, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.add(this.playerInfo, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+
+		this.pnlWinners = new JPanel(new GridBagLayout());
+
+		this.pnlWinners.setBackground(Colors.LIGHT_GREEN);
+		this.pnlWinners.setBorder(new LineBorder(Colors.DARK_GREEN, 1));
+		this.pnlWinners.setVisible(false);
+		this.add(this.pnlWinners, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 		this.stack.setVisible(true);
 	}
@@ -118,54 +126,67 @@ public class DeckPanel extends JPanel
 
 		this.trump.setToolTipText(CardManager.getSuitName(Deck.trumpSuit));
 
-		JLabel lblPlayerName = new JLabel("<html><b>name</b></html>");
-		JLabel lblRole = new JLabel("<html><b>role</b></html>");
-		JLabel lblPlayerCardsLeft = new JLabel("<html><b>cards</b></html>");
-
-		this.playerInfo.removeAll();
-
-		this.playerInfo.add(new JLabel(), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
-		this.playerInfo.add(lblPlayerName, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-		this.playerInfo.add(lblRole, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-		this.playerInfo.add(lblPlayerCardsLeft, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
-
-		int rowPanelPlayerInfo = 1;
-		for (; rowPanelPlayerInfo <= players.size(); rowPanelPlayerInfo++)
+		if (!players.isEmpty())
 		{
-			this.playerInfo.add(new JLabel(WelcomePanel.PLAYER_ICONS[rowPanelPlayerInfo - 1]), new GridBagConstraints(0, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+			JLabel lblPlayerName = new JLabel("<html><b>name</b></html>");
+			JLabel lblRole = new JLabel("<html><b>role</b></html>");
+			JLabel lblPlayerCardsLeft = new JLabel("<html><b>cards</b></html>");
 
-			JLabel playerName = new JLabel(players.get(rowPanelPlayerInfo - 1).getName());
-			this.playerInfo.add(playerName, new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-			playerName.setToolTipText(players.get(rowPanelPlayerInfo - 1).getName());
+			this.playerInfo.removeAll();
 
-			if (players.get(rowPanelPlayerInfo - 1).isAttacker())
-				this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/sword.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-			else if (players.get(rowPanelPlayerInfo - 1).isDefender())
-				this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/shield_silver.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-			else
-				this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/spacer.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+			this.playerInfo.add(new JLabel(), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+			this.playerInfo.add(lblPlayerName, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+			this.playerInfo.add(lblRole, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+			this.playerInfo.add(lblPlayerCardsLeft, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
 
-			this.playerInfo.add(new JLabel("" + players.get(rowPanelPlayerInfo - 1).getHand().size()), new GridBagConstraints(3, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+			int rowPanelPlayerInfo = 1;
+			for (; rowPanelPlayerInfo <= players.size(); rowPanelPlayerInfo++)
+			{
+				this.playerInfo.add(new JLabel(WelcomePanel.PLAYER_ICONS[rowPanelPlayerInfo - 1]), new GridBagConstraints(0, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+
+				JLabel playerName = new JLabel(players.get(rowPanelPlayerInfo - 1).getName());
+				this.playerInfo.add(playerName, new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				playerName.setToolTipText(players.get(rowPanelPlayerInfo - 1).getName());
+
+				if (players.get(rowPanelPlayerInfo - 1).isAttacker())
+					this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/sword.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				else if (players.get(rowPanelPlayerInfo - 1).isDefender())
+					this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/shield_silver.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				else
+					this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/spacer.png")), new GridBagConstraints(2, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+
+				this.playerInfo.add(new JLabel("" + players.get(rowPanelPlayerInfo - 1).getHand().size()), new GridBagConstraints(3, rowPanelPlayerInfo, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+			}
+
+			if (winners.size() > 0)
+				this.pnlWinners.setVisible(true);
+
+			this.pnlWinners.removeAll();
+			this.playerInfo.add(new JLabel(), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
+			this.pnlWinners.add(new JLabel("<html><b>winners</b></html>"), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
+
+			for (int winnerRow = 1; winnerRow <= winners.size(); winnerRow++)
+			{
+				this.pnlWinners.add(new JLabel(WelcomePanel.PLAYER_ICONS[winnerRow - 1]), new GridBagConstraints(0, winnerRow, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+
+				JLabel playerName = new JLabel(winners.get(winnerRow - 1).getName());
+				this.pnlWinners.add(playerName, new GridBagConstraints(1, winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+
+				if (winnerRow == 1)
+					this.pnlWinners.add(new JLabel(CardManager.getImageIcon("images/icons/medal_gold_1.png")), new GridBagConstraints(2, winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				else if (winnerRow == 2)
+					this.pnlWinners.add(new JLabel(CardManager.getImageIcon("images/icons/medal_silver_1.png")), new GridBagConstraints(2, winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				else if (winnerRow == 3)
+					this.pnlWinners.add(new JLabel(CardManager.getImageIcon("images/icons/medal_bronze_1.png")), new GridBagConstraints(2, winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+				else
+					this.pnlWinners.add(new JLabel(CardManager.getImageIcon("images/icons/spacer.png")), new GridBagConstraints(2, winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+
+				this.pnlWinners.add(new JLabel(" "), new GridBagConstraints(3, winnerRow, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
+
+			}
+
+			if (stack != null)
+				stack.setToolTipText(deck.getRemainingCards() + " cards left on stack.");
 		}
-
-		rowPanelPlayerInfo++;
-
-		for (int winnerRow = 0; winnerRow < winners.size(); winnerRow++)
-		{
-			this.playerInfo.add(new JLabel(WelcomePanel.PLAYER_ICONS[winnerRow]), new GridBagConstraints(0, rowPanelPlayerInfo + winnerRow, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
-
-			JLabel playerName = new JLabel(winners.get(winnerRow).getName());
-			this.playerInfo.add(playerName, new GridBagConstraints(1, rowPanelPlayerInfo, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-
-			this.playerInfo.add(new JLabel(CardManager.getImageIcon("images/icons/medal_gold_1.png")), new GridBagConstraints(2, rowPanelPlayerInfo + winnerRow, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
-
-			this.playerInfo.add(new JLabel(" "), new GridBagConstraints(3, rowPanelPlayerInfo + winnerRow, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 3), 0, 0));
-
-		}
-
-		if (stack != null)
-			stack.setToolTipText(deck.getRemainingCards() + " cards left on stack.");
-
-		this.playerInfo.repaint();
 	}
 }

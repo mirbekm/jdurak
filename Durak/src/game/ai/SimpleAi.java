@@ -48,8 +48,6 @@ public class SimpleAi extends AbstractAi
 				lookingForDefenseCard = false;
 		}
 		while (lookingForDefenseCard);
-		// TODO remove
-		System.out.println(possibleDefendCards);
 
 		return new Card[] { cardToBeDefeated, Collections.min(possibleDefendCards) };
 	}
