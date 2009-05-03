@@ -56,7 +56,7 @@ public class DurakPanel extends JPanel
 		// TODO table.getPlayers().get(0) <- in multiplayer games this should be the correct player
 
 		this.handPanel.updateDisplay(table.getPlayers().get(0));
-		this.deckPanel.updateDisplay(table.getDeck(), table.getPlayers());
+		this.deckPanel.updateDisplay(table.getDeck(), table.getPlayers(), table.getWinners());
 		this.tablePanel.newGame(table.getPlayers(), table.getPlayers().get(0), table.getAttackers());
 		this.turnPanel.newGame();
 	}

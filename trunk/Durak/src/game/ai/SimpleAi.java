@@ -6,32 +6,50 @@ import game.Durak;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SimpleAi extends AbstractAi
 {
-	private ArrayList<Card> possibleCards;
+	private Set<Card> possibleCards;
 
 	public SimpleAi(Durak durak, String name)
 	{
 		super(durak, name);
+		this.possibleCards = new HashSet<Card>();
 	}
 
 	//FIXME can only throw new cards in if the player has enough cards to defeend with
 	@Override
 	public Card[] getNextDefendCard()
 	{
-		List<Card> cardsToBeDefeated = this.durak.getTable().getNotYetDefeatedCards();
+		List<Card> cardsToBeDefeated = new ArrayList<Card>(this.durak.getTable().getNotYetDefeatedCards());
+
 		if (this.isAttacker || cardsToBeDefeated.isEmpty())
 			return null;
 
-		Card cardToBeDefeated = Collections.min(cardsToBeDefeated);
-
 		ArrayList<Card> possibleDefendCards = new ArrayList<Card>();
 
-		for (Card cardDefendingWith : this.possibleCards)
-			if (cardDefendingWith.isGreaterThan(cardToBeDefeated))
-				possibleDefendCards.add(cardDefendingWith);
+		boolean lookingForDefenseCard = true;
+		Card cardToBeDefeated = null;
+
+		do
+		{
+			cardToBeDefeated = Collections.min(cardsToBeDefeated);
+
+			for (Card cardDefendingWith : this.possibleCards)
+				if (cardDefendingWith.isGreaterThan(cardToBeDefeated))
+					possibleDefendCards.add(cardDefendingWith);
+
+			if (possibleDefendCards.isEmpty())
+				cardsToBeDefeated.remove(cardToBeDefeated);
+			else
+				lookingForDefenseCard = false;
+		}
+		while (lookingForDefenseCard);
+		// TODO remove
+		System.out.println(possibleDefendCards);
 
 		return new Card[] { cardToBeDefeated, Collections.min(possibleDefendCards) };
 	}
@@ -58,17 +76,10 @@ public class SimpleAi extends AbstractAi
 
 		if (this.isAttacker())
 		{
-			if (this.durak.getTable().getNumbersOnTable().isEmpty())
-			{
-				this.possibleCards.addAll(this.hand);
-			}
-			else
-			{
-				// choose the possible cards and add them to the list
-				for (Card cardOnHand : this.hand)
-					if (this.durak.getTable().canAttackWithThisCard(cardOnHand))
-						this.possibleCards.add(cardOnHand);
-			}
+			// choose the possible cards and add them to the list
+			for (Card cardOnHand : this.hand)
+				if (this.durak.getTable().canAttackWithThisCard(cardOnHand))
+					this.possibleCards.add(cardOnHand);
 		}
 		// is defender
 		else
@@ -78,13 +89,16 @@ public class SimpleAi extends AbstractAi
 					if (cardOnHand.isGreaterThan(cardToBeDefeated))
 						this.possibleCards.add(cardOnHand);
 
+			//TODO remove syso
+			System.out.println(this.possibleCards);
 		}
+
 		return !this.possibleCards.isEmpty();
 	}
 
 	private void resetLists()
 	{
-		this.possibleCards = new ArrayList<Card>();
+		this.possibleCards.clear();
 	}
 
 	private class CardComparator implements Comparator<Card>

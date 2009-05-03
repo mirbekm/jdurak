@@ -21,6 +21,7 @@ public class Table
 
 	private AbstractPlayer defender = null;
 	private ArrayList<AbstractPlayer> attackers = null;
+	private ArrayList<AbstractPlayer> winners = null;
 	private Durak durak;
 
 	private ArrayList<Card> cardsOfAttackerOneOnTable;
@@ -53,6 +54,7 @@ public class Table
 	public void newGame()
 	{
 		this.attackers = new ArrayList<AbstractPlayer>();
+		this.winners = new ArrayList<AbstractPlayer>();
 
 		this.deck = new Deck(this.durak.getRules().getNumberOfCardsPerSuit());
 
@@ -86,7 +88,7 @@ public class Table
 		playerToStart.setIsAttacker(true);
 
 		this.defender = this.players.get((indexOfPlayerToStart + 1) % this.players.size());
-		this.defender.setIsAttacker(false);
+		this.defender.setIsDefender(true);
 
 		if (this.players.size() > 2)
 		{
@@ -216,13 +218,28 @@ public class Table
 	 */
 	public boolean canAttackWithThisCard(Card card)
 	{
+		boolean defenderHasEnoughCards = this.defender.getHand().size() - 1 - this.getNotYetDefeatedCards().size() >= 0;
+		boolean numberIsAlreadyOnTable = this.numbersOnTable.contains(card.getNumber());
+		boolean noCardsOnTable = this.numbersOnTable.isEmpty();
+		boolean firstAttacker = this.attackers.get(0).equals(this.ownerOfAttackingCard(card));
 
-		return this.defender.getHand().size() - 1 - this.getNotYetDefeatedCards().size() >= 1 && (this.numbersOnTable.contains(card.getNumber()) || this.numbersOnTable.isEmpty());
+		if (noCardsOnTable)
+			return firstAttacker;
+
+		return defenderHasEnoughCards && numberIsAlreadyOnTable;
 	}
 
 	public boolean canDefendWithCard(Card defendingCard, Card cardToBeDefeated)
 	{
 		return defendingCard.isGreaterThan(cardToBeDefeated) && !this.defendedCards.containsKey(cardToBeDefeated);
+	}
+
+	private AbstractPlayer ownerOfAttackingCard(Card card)
+	{
+		for (AbstractPlayer attacker : this.attackers)
+			if (attacker.getHand().contains(card))
+				return attacker;
+		return null;
 	}
 
 	public Deck getDeck()
@@ -247,56 +264,56 @@ public class Table
 
 	public void endTurn()
 	{
-		if (this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size())
+		boolean defenderHasWon = this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size();
+
+		for (AbstractPlayer player : this.players)
 		{
-			// defender has won
-			this.resetLists();
-
-			for (AbstractPlayer player : this.attackers)
-				player.fillUp(this.deck);
-
-			this.defender.fillUp(this.deck);
-
-			int indexOfOldDefender = this.players.indexOf(this.defender);
-
-			this.defender = this.players.get((indexOfOldDefender + 1) % this.players.size());
-			this.defender.setIsAttacker(false);
-
-			this.attackers.clear();
-
-			this.attackers.add(this.players.get((this.players.indexOf(this.defender) + 1) % this.players.size()));
-
-			if (this.players.size() > 2)
-				this.attackers.add(this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size()));
-
-			for (AbstractPlayer attacker : this.attackers)
-				attacker.setIsAttacker(true);
-
+			player.setIsAttacker(false);
+			player.setIsDefender(false);
 		}
-		else
+
+		// fill up
+		if (!defenderHasWon)
 		{
-			// defender has lost
 			this.defender.getHand().addAll(this.cardsOfDefender);
 			this.defender.getHand().addAll(this.cardsOfAttackerOneOnTable);
 			this.defender.getHand().addAll(this.cardsOfAttackerTwoOnTable);
+		}
 
-			for (AbstractPlayer player : this.attackers)
-				player.fillUp(this.deck);
+		for (AbstractPlayer player : this.attackers)
+			player.fillUp(this.deck);
 
-			this.defender.fillUp(this.deck);
+		this.defender.fillUp(this.deck);
 
-			this.resetLists();
+		// check if any of the remaining players has won
+		boolean foundPlayer = false;
+		for (AbstractPlayer player : this.players)
+			if (player.getHand().size() == 0)
+				foundPlayer = this.winners.add(player);
 
-			this.attackers.clear();
+		if (foundPlayer)
+			this.players.removeAll(this.winners);
 
+		this.resetLists();
+
+		// Choose the next players
+		int indexOfOldDefender = this.players.indexOf(this.defender);
+
+		if (defenderHasWon)
+			this.defender = this.players.get((indexOfOldDefender + 1) % this.players.size());
+		else
+			this.defender = this.players.get((indexOfOldDefender + 2) % this.players.size());
+
+		this.defender.setIsDefender(true);
+
+		this.attackers.clear();
+		this.attackers.add(this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size()));
+
+		if (this.players.size() > 2)
 			this.attackers.add(this.players.get((this.players.indexOf(this.defender) + 1) % this.players.size()));
 
-			if (this.players.size() > 2)
-				this.attackers.add(this.players.get((this.players.indexOf(this.defender) + this.players.size() - 1) % this.players.size()));
-
-			for (AbstractPlayer attacker : this.attackers)
-				attacker.setIsAttacker(true);
-		}
+		for (AbstractPlayer attacker : this.attackers)
+			attacker.setIsAttacker(true);
 	}
 
 	public HashSet<Integer> getNumbersOnTable()
@@ -318,5 +335,24 @@ public class Table
 					notYetDefendedCards.add(card);
 
 		return Collections.unmodifiableList(notYetDefendedCards);
+	}
+
+	public boolean isGameOver()
+	{
+		int playersWithNoCards = 0;
+
+		if (this.deck.hasRemainingCards())
+			return false;
+		else
+			for (AbstractPlayer player : this.durak.getTable().getPlayers())
+				if (player.getHand().size() == 0)
+					playersWithNoCards++;
+
+		return playersWithNoCards == this.players.size() - 1 && this.getNotYetDefeatedCards().isEmpty();
+	}
+
+	public List<AbstractPlayer> getWinners()
+	{
+		return Collections.unmodifiableList(this.winners);
 	}
 }
