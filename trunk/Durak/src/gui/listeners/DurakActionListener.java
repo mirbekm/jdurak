@@ -26,6 +26,7 @@ public class DurakActionListener implements ActionListener
 	public static final int ACTION_END_TURN = 3;
 	public static final int ACTION_NEXT_MOVE = 5;
 	public static final int ACTION_UPDATE_DISPLAY = 6;
+	public static final int ACTION_UPDATE_HAND_PANEL = 7;
 
 	private Durak durak;
 	private DurakWindow durakWindow;
@@ -66,6 +67,10 @@ public class DurakActionListener implements ActionListener
 		case ACTION_UPDATE_DISPLAY:
 			this.updateDisplay();
 			break;
+
+		case ACTION_UPDATE_HAND_PANEL:
+			this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0));
+			break;
 		}
 	}
 
@@ -81,7 +86,7 @@ public class DurakActionListener implements ActionListener
 		for (String name : this.durakWindow.getWelcomePanel().getComputers())
 			players.add(new SimpleAi(this.durak, name));
 
-		// TODO add more computers
+		// TODO computer is not automatically an simple ai
 
 		this.durak.newGame(players, new Rules(numberOfCards));
 		this.durakWindow.showDurakPanel();
@@ -214,21 +219,38 @@ public class DurakActionListener implements ActionListener
 
 	private void notifyGameHasEnded()
 	{
-		AbstractPlayer winningPlayer = null;
 		String winningText = "";
 
-		for (AbstractPlayer player : this.durak.getTable().getPlayers())
-			if (player.getHand().size() == 0)
-				if (winningPlayer == null)
-					winningPlayer = player;
-				else
-					; // draw ?
+		if (this.durak.getTable().getPlayers().size() == 1)
+		{
+			AbstractPlayer durakPlayer = null;
+			durakPlayer = this.durak.getTable().getPlayers().get(0);
 
-		if (winningPlayer.equals(this.durak.getTable().getPlayers().get(0)))
-			winningText = "Congratulations! You have won!";
-		else
-			winningText = "You have lost! " + winningPlayer + " has won the match!";
+			int place = 1;
+			for (AbstractPlayer player : this.durak.getTable().getWinners())
+			{
+				winningText += player.getName() + " scored " + place;
 
+				switch (place)
+				{
+				case 1:
+					winningText += "st\n";
+					break;
+				case 2:
+					winningText += "nd\n";
+					break;
+				case 3:
+					winningText += "rd\n";
+					break;
+				default:
+					winningText += "th\n";
+				}
+
+				place++;
+			}
+
+			winningText += durakPlayer.getName() + " is the durak!";
+		}
 		Object[] options = { "quit game", "new game" };
 		int n = JOptionPane.showOptionDialog(this.durakWindow, winningText, "Game Over!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
@@ -319,5 +341,10 @@ public class DurakActionListener implements ActionListener
 	{
 		this.durak.getTable().defend(cardToBeDefeated, cardDefendingWith);
 		this.updateDisplay();
+	}
+
+	public DurakWindow getDurakWindow()
+	{
+		return this.durakWindow;
 	}
 }

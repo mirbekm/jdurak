@@ -59,7 +59,7 @@ public class SimpleAi extends AbstractAi
 		if (this.possibleCards.isEmpty() || !this.isAttacker)
 			return null;
 		else
-			return Collections.min(this.possibleCards, new CardComparator());
+			return Collections.min(this.possibleCards, new CardComparatorSortByNumberAndTrump());
 	}
 
 	@Override
@@ -86,9 +86,6 @@ public class SimpleAi extends AbstractAi
 				for (Card cardOnHand : this.hand)
 					if (cardOnHand.isGreaterThan(cardToBeDefeated))
 						this.possibleCards.add(cardOnHand);
-
-			//TODO remove syso
-			System.out.println(this.possibleCards);
 		}
 
 		return !this.possibleCards.isEmpty();
@@ -99,7 +96,7 @@ public class SimpleAi extends AbstractAi
 		this.possibleCards.clear();
 	}
 
-	private class CardComparator implements Comparator<Card>
+	private class CardComparatorSortByNumberAndTrump implements Comparator<Card>
 	{
 
 		@Override

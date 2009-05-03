@@ -25,8 +25,8 @@ import javax.swing.border.TitledBorder;
 
 public class TablePanel extends JTiledPanel
 {
-	public static final int WIDTH = 675;
-	public static final int HEIGHT = 465;
+	public static final int WIDTH = 700;
+	public static final int HEIGHT = 500;
 
 	private JLayeredPane layeredPanelAttackerOne;
 	private JLayeredPane layeredPanelAttackerTwo;
@@ -70,6 +70,11 @@ public class TablePanel extends JTiledPanel
 
 	public void newGame(List<AbstractPlayer> players, final AbstractPlayer activePlayer, final List<AbstractPlayer> attackers)
 	{
+		if (this.layeredPanelAttackerOne != null)
+			this.remove(this.layeredPanelAttackerOne);
+		if (this.layeredPanelAttackerTwo != null)
+			this.remove(this.layeredPanelAttackerTwo);
+
 		this.cardsFromAttackerOne = null;
 		this.cardsFromAttackerTwo = null;
 		this.defendedCards = null;
@@ -123,13 +128,6 @@ public class TablePanel extends JTiledPanel
 		//		this.dropTargetPanelAttackerTwo = new DropTarget(this.panelAttackerTwo, new TableDropTargetListenerAsAttacker(this.actionListener, this.panelAttackerTwo));
 		//		this.dropTargetPanelAttackerTwo.setActive(false);
 
-		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(0).getName());
-		if (attackers.size() == 2)
-			this.borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(1).getName());
-
-		panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
-		panelAttackerTwo.setViewportBorder(borderPanelAttackerTwo);
-
 		this.add(panelAttackerOne, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 		if (players.size() > 2)
@@ -142,6 +140,12 @@ public class TablePanel extends JTiledPanel
 		this.borderPanelAttackerOne = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(0).getName());
 		if (attackers.size() == 2)
 			this.borderPanelAttackerTwo = new TitledBorder(new LineBorder(Colors.DARK_GREEN), "Cards from: " + attackers.get(1).getName());
+
+		if (this.panelAttackerOne != null)
+			this.panelAttackerOne.setViewportBorder(borderPanelAttackerOne);
+
+		if (this.panelAttackerTwo != null)
+			this.panelAttackerTwo.setViewportBorder(borderPanelAttackerTwo);
 
 		this.cardsFromAttackerOne = cardsFromAttackerOne;
 		this.cardsFromAttackerTwo = cardsFromAttackerTwo;
@@ -173,11 +177,17 @@ public class TablePanel extends JTiledPanel
 			this.updatePanel(this.layeredPanelAttackerTwo, this.panelAttackerTwo, cardsFromAttackerTwo, defendedCards);
 		}
 
-		// TODO defeat me some cards baby - ???
+		// TODO only one if only one attacker
+		//		if (this.panelAttackerTwo != null)
+		//			if (attackers.size() == 1)
+		//				this.panelAttackerTwo.setVisible(false);
+		//			else
+		//				this.panelAttackerTwo.setVisible(true);
 	}
 
 	private void updatePanel(JLayeredPane layeredPane, JScrollPane scrollPane, List<Card> cardsFromAttacker, Map<Card, Card> defendedCards)
 	{
+
 		layeredPane.removeAll();
 		int xOffset = CardManager.CARD_WIDTH + 4;
 
