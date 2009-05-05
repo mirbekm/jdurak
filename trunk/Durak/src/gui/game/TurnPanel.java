@@ -61,6 +61,8 @@ public class TurnPanel extends JPanel
 		this.radSortByNumber.addActionListener(actionListener);
 		this.radSortByNumber.setActionCommand("" + DurakActionListener.ACTION_UPDATE_HAND_PANEL);
 		this.radSortBySuit.setActionCommand("" + DurakActionListener.ACTION_UPDATE_HAND_PANEL);
+		this.radSortBySuit.setOpaque(false);
+		this.radSortByNumber.setOpaque(false);
 
 		JPanel pnlSortBy = new JPanel(new GridBagLayout());
 		pnlSortBy.setBackground(Colors.LIGHT_GREEN);

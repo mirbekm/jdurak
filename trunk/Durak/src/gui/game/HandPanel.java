@@ -80,7 +80,8 @@ public class HandPanel extends JPanel
 			if (player.isAttacker())
 				guiCard.addMouseListener(this.cardMouseListener);
 
-			new CardDragSourceListener(guiCard);
+			if (player.isAttacker() || player.isDefender())
+				new CardDragSourceListener(guiCard);
 
 			this.handPane.add(guiCard, 0);
 		}

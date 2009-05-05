@@ -196,50 +196,53 @@ public class TablePanel extends JTiledPanel
 		int rows = (scrollPane.getHeight() - 10) / (CardManager.CARD_HEIGHT + 20);
 		int rowSpacing = (scrollPane.getHeight() - 10) - rows * CardManager.CARD_HEIGHT;
 
-		if (cardsAttackerOne > cardsPerRow * rows)
+		if (rows > 0)
 		{
-			if (cardsAttackerOne % rows == 0)
-				cardsPerRow = cardsAttackerOne / rows;
-			else
-				cardsPerRow = (cardsAttackerOne / rows) + 1;
-		}
 
-		int actualCardsPerRow = 0;
-		int actualRow = 0;
-		for (int cardNumber = 0; cardNumber < cardsFromAttacker.size(); cardNumber++)
-		{
-			Card card = cardsFromAttacker.get(cardNumber);
-			GuiCard guiCard = new GuiCard(card);
-			guiCard.setCursor(Cursor.getDefaultCursor());
-
-			if (actualCardsPerRow >= cardsPerRow)
+			if (cardsAttackerOne > cardsPerRow * rows)
 			{
-				actualCardsPerRow = 0;
-				actualRow++;
+				if (cardsAttackerOne % rows == 0)
+					cardsPerRow = cardsAttackerOne / rows;
+				else
+					cardsPerRow = (cardsAttackerOne / rows) + 1;
 			}
 
-			guiCard.setBounds((actualCardsPerRow) * (xOffset), actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows), CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-
-			GuiCard cardDefendedWith = null;
-			if (defendedCards.containsKey(card))
+			int actualCardsPerRow = 0;
+			int actualRow = 0;
+			for (int cardNumber = 0; cardNumber < cardsFromAttacker.size(); cardNumber++)
 			{
-				cardDefendedWith = new GuiCard(defendedCards.get(card));
-				cardDefendedWith.setBounds((actualCardsPerRow) * (xOffset), (actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows)) + 35, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-				cardDefendedWith.setCursor(Cursor.getDefaultCursor());
+				Card card = cardsFromAttacker.get(cardNumber);
+				GuiCard guiCard = new GuiCard(card);
+				guiCard.setCursor(Cursor.getDefaultCursor());
+
+				if (actualCardsPerRow >= cardsPerRow)
+				{
+					actualCardsPerRow = 0;
+					actualRow++;
+				}
+
+				guiCard.setBounds((actualCardsPerRow) * (xOffset), actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows), CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+
+				GuiCard cardDefendedWith = null;
+				if (defendedCards.containsKey(card))
+				{
+					cardDefendedWith = new GuiCard(defendedCards.get(card));
+					cardDefendedWith.setBounds((actualCardsPerRow) * (xOffset), (actualRow * (CardManager.CARD_HEIGHT + rowSpacing / rows)) + 35, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+					cardDefendedWith.setCursor(Cursor.getDefaultCursor());
+				}
+				else
+				{
+					if (!this.humanPlayer.isAttacker()) // TODO doesnt do the trick if more than 3 players are playing. player still could throw cards in
+						new DropTarget(guiCard, new TableDropTargetListenerAsDefender(this.actionListener, guiCard));
+				}
+
+				actualCardsPerRow++;
+
+				layeredPane.add(guiCard, 0);
+
+				if (cardDefendedWith != null)
+					layeredPane.add(cardDefendedWith, 0);
 			}
-			else
-			{
-				if (!this.humanPlayer.isAttacker()) // TODO doesnt do the trick if more than 3 players are playing. player still could throw cards in
-					new DropTarget(guiCard, new TableDropTargetListenerAsDefender(this.actionListener, guiCard));
-			}
-
-			actualCardsPerRow++;
-
-			layeredPane.add(guiCard, 0);
-
-			if (cardDefendedWith != null)
-				layeredPane.add(cardDefendedWith, 0);
 		}
 	}
-
 }

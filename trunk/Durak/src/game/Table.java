@@ -340,16 +340,16 @@ public class Table
 
 	public boolean isGameOver()
 	{
-		int playersWithNoCards = 0;
+		//		int playersWithNoCards = 0;
+		//
+		//		if (this.deck.hasRemainingCards())
+		//			return false;
+		//		else
+		//			for (AbstractPlayer player : this.durak.getTable().getPlayers())
+		//				if (player.getHand().size() == 0)
+		//					playersWithNoCards++;
 
-		if (this.deck.hasRemainingCards())
-			return false;
-		else
-			for (AbstractPlayer player : this.durak.getTable().getPlayers())
-				if (player.getHand().size() == 0)
-					playersWithNoCards++;
-
-		return playersWithNoCards == this.players.size() - 1 && this.getNotYetDefeatedCards().isEmpty();
+		return this.players.size() <= 1;
 	}
 
 	public List<AbstractPlayer> getWinners()
