@@ -20,11 +20,10 @@ public class SimpleAi extends AbstractAi
 		this.possibleCards = new HashSet<Card>();
 	}
 
-	//FIXME can only throw new cards in if the player has enough cards to defeend with
 	@Override
-	public Card[] getNextDefendCard()
+	public DefendCard getNextDefendCard()
 	{
-		List<Card> cardsToBeDefeated = new ArrayList<Card>(this.durak.getTable().getNotYetDefeatedCards());
+		List<Card> cardsToBeDefeated = new ArrayList<Card>(this.getTable().getNotYetDefeatedCards());
 
 		if (this.isAttacker || cardsToBeDefeated.isEmpty())
 			return null;
@@ -49,7 +48,7 @@ public class SimpleAi extends AbstractAi
 		}
 		while (lookingForDefenseCard);
 
-		return new Card[] { cardToBeDefeated, Collections.min(possibleDefendCards) };
+		return new DefendCard(Collections.min(possibleDefendCards), cardToBeDefeated);
 	}
 
 	@Override
@@ -76,13 +75,13 @@ public class SimpleAi extends AbstractAi
 		{
 			// choose the possible cards and add them to the list
 			for (Card cardOnHand : this.hand)
-				if (this.durak.getTable().canAttackWithThisCard(cardOnHand))
+				if (this.getTable().canAttackWithThisCard(cardOnHand))
 					this.possibleCards.add(cardOnHand);
 		}
 		// is defender
 		else
 		{
-			for (Card cardToBeDefeated : this.durak.getTable().getNotYetDefeatedCards())
+			for (Card cardToBeDefeated : this.getTable().getNotYetDefeatedCards())
 				for (Card cardOnHand : this.hand)
 					if (cardOnHand.isGreaterThan(cardToBeDefeated))
 						this.possibleCards.add(cardOnHand);
@@ -96,9 +95,14 @@ public class SimpleAi extends AbstractAi
 		this.possibleCards.clear();
 	}
 
+	/**
+	 * Sorts the cards by number and trump. Lowest number and no trump will be first. Highest number or highest trump will be last.
+	 * 
+	 * @author Andreas Krings - <a href="mailto:info@ankri.de">info@ankri.de</a> - <a href="http://www.ankri.de" target="_blank">ankri.de</a>
+	 * 
+	 */
 	private class CardComparatorSortByNumberAndTrump implements Comparator<Card>
 	{
-
 		@Override
 		public int compare(Card cardOne, Card cardTwo)
 		{

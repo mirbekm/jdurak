@@ -14,10 +14,10 @@ public abstract class AbstractPlayer
 	protected String name;
 	protected ArrayList<Card> hand;
 
-	protected Durak durak;
+	private Durak durak;
 
 	protected boolean isAttacker = false;
-	private boolean isDefender;
+	protected boolean isDefender;
 
 	/**
 	 * Create a new player with the given parameters
@@ -34,7 +34,16 @@ public abstract class AbstractPlayer
 
 		this.name = name;
 		this.durak = durak;
+	}
 
+	protected Table getTable()
+	{
+		return this.durak.getTable();
+	}
+
+	protected Rules getRules()
+	{
+		return this.durak.getRules();
 	}
 
 	/**
@@ -52,7 +61,7 @@ public abstract class AbstractPlayer
 	 */
 	public void fillUp(Deck deck)
 	{
-		while (deck.hasRemainingCards() && this.hand.size() < this.durak.getRules().getNumberOfCardsPerPlayer())
+		while (deck.hasRemainingCards() && this.hand.size() < this.getRules().getNumberOfCardsPerPlayer())
 			this.hand.add(deck.getCard());
 	}
 
@@ -120,17 +129,29 @@ public abstract class AbstractPlayer
 		return this.name;
 	}
 
+	/**
+	 * Attack with a card from the hand
+	 * 
+	 * @param card
+	 *            The card the player wants to attack with.
+	 * @return <code>null</code> if the card is not on the player's hand. The card otherwise.
+	 */
 	public Card attackWith(Card card)
 	{
 		if (!this.hand.contains(card))
 			return null;
 
-		this.durak.getTable().attack(card, this);
+		this.getTable().attack(card, this);
 		this.hand.remove(card);
 
 		return card;
 	}
 
+	/**
+	 * Get the lowest Trump of the player
+	 * 
+	 * @return <code>null</code> if the hand is empty or the player doesn't have any trumps. Otherwise the lowest trump card will be returned.
+	 */
 	public Card getLowestTrump()
 	{
 		if (this.hand.isEmpty())

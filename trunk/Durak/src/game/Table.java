@@ -125,7 +125,7 @@ public class Table
 
 	/**
 	 * 
-	 * @return the list of cards from attacker two, that are on the table
+	 * @return the list of cards from attacker two, that are on the table. <code>null</code> if there is no second attacker
 	 */
 	public List<Card> getCardsOfAttackerTwoOnTable()
 	{
@@ -156,14 +156,14 @@ public class Table
 	{
 		assert (cardToBeDefeated != null & cardDefendingWith != null);
 
-		if (!defendedCards.containsKey(cardToBeDefeated))
+		if (!this.defendedCards.containsKey(cardToBeDefeated))
 		{
 			if (cardDefendingWith.isGreaterThan(cardToBeDefeated))
 			{
 				this.defender.getHand().remove(cardDefendingWith);
 				this.numbersOnTable.add(cardDefendingWith.getNumber());
 				this.cardsOfDefender.add(cardDefendingWith);
-				defendedCards.put(cardToBeDefeated, cardDefendingWith);
+				this.defendedCards.put(cardToBeDefeated, cardDefendingWith);
 			}
 			else
 			{
@@ -230,8 +230,19 @@ public class Table
 		return defenderHasEnoughCards && numberIsAlreadyOnTable;
 	}
 
+	/**
+	 * 
+	 * @param defendingCard
+	 *            The defending card. Not <code>null</code>!
+	 * @param cardToBeDefeated
+	 *            The card to be defeated. Not <code>null</code>!
+	 * @return <code>true</code> if the defending can defeat the other card
+	 */
 	public boolean canDefendWithCard(Card defendingCard, Card cardToBeDefeated)
 	{
+		assert (defendingCard != null);
+		assert (cardToBeDefeated != null);
+
 		return defendingCard.isGreaterThan(cardToBeDefeated) && !this.defendedCards.containsKey(cardToBeDefeated);
 	}
 
@@ -240,29 +251,53 @@ public class Table
 		for (AbstractPlayer attacker : this.attackers)
 			if (attacker.getHand().contains(card))
 				return attacker;
+
 		return null;
 	}
 
+	/**
+	 * Get the deck
+	 * 
+	 * @return The deck
+	 */
 	public Deck getDeck()
 	{
 		return this.deck;
 	}
 
+	/**
+	 * Get the list of players, that are still in the game
+	 * 
+	 * @return The list of players, that are still in the game
+	 */
 	public List<AbstractPlayer> getPlayers()
 	{
 		return Collections.unmodifiableList(this.players);
 	}
 
+	/**
+	 * Get the list of attackers. Either one or two attackers are in the list
+	 * 
+	 * @return The list of attackers.
+	 */
 	public List<AbstractPlayer> getAttackers()
 	{
 		return Collections.unmodifiableList(attackers);
 	}
 
+	/**
+	 * Get the defending Player
+	 * 
+	 * @return The defender
+	 */
 	public AbstractPlayer getDefender()
 	{
 		return this.defender;
 	}
 
+	/**
+	 * End a turn.
+	 */
 	public void endTurn()
 	{
 		boolean defenderHasWon = this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size();
@@ -338,22 +373,31 @@ public class Table
 		return Collections.unmodifiableList(notYetDefendedCards);
 	}
 
+	/**
+	 * 
+	 * @return <code>true</code> if the game is over
+	 */
 	public boolean isGameOver()
 	{
-		//		int playersWithNoCards = 0;
-		//
-		//		if (this.deck.hasRemainingCards())
-		//			return false;
-		//		else
-		//			for (AbstractPlayer player : this.durak.getTable().getPlayers())
-		//				if (player.getHand().size() == 0)
-		//					playersWithNoCards++;
-
 		return this.players.size() <= 1;
 	}
 
+	/**
+	 * Get the list of the winners
+	 * 
+	 * @return The list of the winners
+	 */
 	public List<AbstractPlayer> getWinners()
 	{
 		return Collections.unmodifiableList(this.winners);
+	}
+
+	/**
+	 * 
+	 * @return The rules
+	 */
+	public Rules getRules()
+	{
+		return this.durak.getRules();
 	}
 }

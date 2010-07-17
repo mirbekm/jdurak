@@ -7,8 +7,11 @@ import game.Player;
 import game.Rules;
 import game.Table;
 import game.ai.AbstractAi;
+import game.ai.DefendCard;
+import game.ai.PabloAi;
 import game.ai.SimpleAi;
 import gui.DurakWindow;
+import gui.WelcomePanel.ComputerAi;
 import gui.game.GuiCard;
 import gui.helpers.CardManager;
 
@@ -69,7 +72,7 @@ public class DurakActionListener implements ActionListener
 			break;
 
 		case ACTION_UPDATE_HAND_PANEL:
-			this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0));
+			this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(this.durak.getTable().getPlayers().get(0), this.durak.getTable());
 			break;
 		}
 	}
@@ -78,17 +81,29 @@ public class DurakActionListener implements ActionListener
 	{
 		String playerName = this.durakWindow.getWelcomePanel().getPlayerName();
 		int numberOfCards = this.durakWindow.getWelcomePanel().getNumberOfCards();
+		boolean isHelpWanted = this.durakWindow.getWelcomePanel().isHelpWanted();
 
 		ArrayList<AbstractPlayer> players = new ArrayList<AbstractPlayer>();
 
 		players.add(new Player(this.durak, playerName));
 
-		for (String name : this.durakWindow.getWelcomePanel().getComputers())
-			players.add(new SimpleAi(this.durak, name));
-
-		// TODO computer is not automatically an simple ai
-
+		for (ComputerAi computer : this.durakWindow.getWelcomePanel().getComputers())
+		{
+			switch (computer.getType())
+			{
+			case EASY:
+			case NORMAL:
+			case HARD:
+				players.add(new SimpleAi(this.durak, computer.toString()));
+				break;
+			case PABLO:
+				players.add(new PabloAi(this.durak, computer.toString()));
+				break;
+			}
+		}
 		this.durak.newGame(players, new Rules(numberOfCards));
+		this.durak.getRules().setDoHelp(isHelpWanted);
+
 		this.durakWindow.showDurakPanel();
 		this.durakWindow.newGame(this.durak.getTable());
 
@@ -120,7 +135,16 @@ public class DurakActionListener implements ActionListener
 		if (this.durak.getTable().isGameOver())
 			this.notifyGameHasEnded();
 
-		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0));
+		AbstractPlayer player = table.getPlayers().get(0);
+		if (player instanceof Player)
+		{
+			if (this.durak.getTable().getAttackers().contains(player) || this.durak.getTable().getDefender().equals(player))
+				this.durakWindow.getDurakPanel().getHandPanel().setEnabled(true);
+			else
+				this.durakWindow.getDurakPanel().getHandPanel().setEnabled(false);
+		}
+
+		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0), this.durak.getTable());
 		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getAttackers());
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers(), table.getWinners());
 
@@ -167,7 +191,7 @@ public class DurakActionListener implements ActionListener
 			this.durakWindow.getDurakPanel().getTurnPanel().getBtnEndTurn().setVisible(false);
 			this.durakWindow.getDurakPanel().getTurnPanel().getBtnNextMove().setVisible(false);
 
-			//TODO what about winning ?
+			// TODO what about winning ?
 		}
 		else
 		{
@@ -306,9 +330,9 @@ public class DurakActionListener implements ActionListener
 
 			while (computer.wantsToPlayAnotherCard())
 			{
-				Card[] defense = computer.getNextDefendCard();
-				if (defense != null && defense.length == 2)
-					this.durak.getTable().defend(defense[0], defense[1]);
+				DefendCard defense = computer.getNextDefendCard();
+				if (defense != null)
+					this.durak.getTable().defend(defense.getCardToBeDefeated(), defense.getCardDefendingWith());
 				else
 					System.err.println("problem with defense method in ai"); // TODO proper error
 			}

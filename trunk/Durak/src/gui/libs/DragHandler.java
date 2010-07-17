@@ -60,29 +60,33 @@ import javax.swing.text.JTextComponent;
  * &lt;/code&gt;
  * </pre>
  * <ul>
- * <li>Supports painting an arbitrary {@link Icon} with transparency to represent the item being dragged (restricted to the {@link java.awt.Window} of the drag source if the platform doesn't support drag images).
+ * <li>Supports painting an arbitrary {@link Icon} with transparency to represent the item being dragged (restricted to the {@link java.awt.Window} of the drag
+ * source if the platform doesn't support drag images).
  * <li>Disallow starting a drag if the user requests an unsupported action.
- * <li>Adjusts the cursor on drags with no modifier for which the default action is disallowed but where one or more non-default actions are allowed, e.g. a drag (with no modifiers) to a target which supports "link" should change the cursor
- * to "link" (prior to 1.6, the JRE behavior is to display a "not allowed" cursor, even though the action actually depends on how the drop target responds). <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4869264"> The bug</a>
- * is fixed in java 1.6.
- * <li>Disallow drops to targets if the non-default (user-requested) action is not supported by the target, e.g. the user requests a "copy" when the target only supports "move". This is generally the responsibility of the drop handler,
- * which decides whether or not to accept a drag. The DragHandler provides static modifier state information since the drop handler doesn't have access to it.
+ * <li>Adjusts the cursor on drags with no modifier for which the default action is disallowed but where one or more non-default actions are allowed, e.g. a
+ * drag (with no modifiers) to a target which supports "link" should change the cursor to "link" (prior to 1.6, the JRE behavior is to display a "not allowed"
+ * cursor, even though the action actually depends on how the drop target responds). <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4869264"> The
+ * bug</a> is fixed in java 1.6.
+ * <li>Disallow drops to targets if the non-default (user-requested) action is not supported by the target, e.g. the user requests a "copy" when the target only
+ * supports "move". This is generally the responsibility of the drop handler, which decides whether or not to accept a drag. The DragHandler provides static
+ * modifier state information since the drop handler doesn't have access to it.
  * </ul>
- * NOTE: Fundamentally, the active action is determined by the drop handler in {@link DropTargetDragEvent#acceptDrag}, but often client code simply relies on {@link DropTargetDragEvent#getDropAction}.
+ * NOTE: Fundamentally, the active action is determined by the drop handler in {@link DropTargetDragEvent#acceptDrag}, but often client code simply relies on
+ * {@link DropTargetDragEvent#getDropAction}.
  */
-//TODO: separate into the the following pieces:
+// TODO: separate into the the following pieces:
 // cursor fix (fixed in jre1.6) (global DSL)
-// ghost images (DSL) 
+// ghost images (DSL)
 // multi-selection drag workaround (if not using swing drag gesture recognizer)
-//   (use swing drag gesture recognizer if possible?) DSL+mouse listener
+// (use swing drag gesture recognizer if possible?) DSL+mouse listener
 // drag unselected item (fixed in 1.6, flag in 1.5.0.06) (no workaround yet?)
-//TODO: make cursor offset within drag icon the origin when scaling the drag
-//icon smaller; otherwise it shrinks away from the cursor instead of toward it
-//TODO: determine if acceptDrag(int) totally determines the drop action
-//MAYBE: should Transferable/Icon provision be a separate interface?  only if 
-//the rest of the drag handler is constant and only the image needs to change
-//(for standard components, e.g. tree cells, table cells, etc.
-//NOTE: need to understand default cursor behavior
+// TODO: make cursor offset within drag icon the origin when scaling the drag
+// icon smaller; otherwise it shrinks away from the cursor instead of toward it
+// TODO: determine if acceptDrag(int) totally determines the drop action
+// MAYBE: should Transferable/Icon provision be a separate interface? only if
+// the rest of the drag handler is constant and only the image needs to change
+// (for standard components, e.g. tree cells, table cells, etc.
+// NOTE: need to understand default cursor behavior
 public abstract class DragHandler implements DragSourceListener, DragSourceMotionListener, DragGestureListener
 {
 
@@ -126,7 +130,8 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	private static Transferable transferable = UNKNOWN_TRANSFERABLE;
 
 	/**
-	 * Used to communicate modifier state to {@link DropHandler}. Note that this field will only be accurate when a {@link DragHandler} in the same VM started the drag. Otherwise, {@link #UNKNOWN_MODIFIERS} will be returned.
+	 * Used to communicate modifier state to {@link DropHandler}. Note that this field will only be accurate when a {@link DragHandler} in the same VM started
+	 * the drag. Otherwise, {@link #UNKNOWN_MODIFIERS} will be returned.
 	 */
 	static int getModifiers()
 	{
@@ -207,12 +212,13 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	}
 
 	/**
-	 * Override to control whether a drag is started. The default implementation disallows the drag if the user is applying modifiers and the user-requested action is not supported.
+	 * Override to control whether a drag is started. The default implementation disallows the drag if the user is applying modifiers and the user-requested
+	 * action is not supported.
 	 */
 	protected boolean canDrag(DragGestureEvent e)
 	{
 		int mods = e.getTriggerEvent().getModifiersEx() & KEY_MASK;
-		//        Log.debug("drag modifiers=" + mods);
+		// Log.debug("drag modifiers=" + mods);
 		if (mods == MOVE_MASK)
 			return (supportedActions & MOVE) != 0;
 		if (mods == COPY_MASK)
@@ -237,7 +243,8 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	 * Override this to provide a custom image. The {@link Icon} returned by this method by default is <code>null</code>, which results in no drag image.
 	 * 
 	 * @param srcOffset
-	 *            set this to be the offset from the drag source component's upper left corner to the image's upper left corner. For example, when dragging a row from a list, the offset would be the row's bounding rectangle's (x,y)
+	 *            set this to be the offset from the drag source component's upper left corner to the image's upper left corner. For example, when dragging a
+	 *            row from a list, the offset would be the row's bounding rectangle's (x,y)
 	 *            coordinate.
 	 *            <p>
 	 *            The default value is (0,0), so if unchanged, the image is will use the same origin as the drag source component.
@@ -262,7 +269,7 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 		if ((e.getDragAction() & supportedActions) != 0 && canDrag(e))
 		{
 			setModifiers(e.getTriggerEvent().getModifiersEx() & KEY_MASK);
-			//            Log.debug("Start drag with mods=" + modifiers);
+			// Log.debug("Start drag with mods=" + modifiers);
 			Transferable transferable = getTransferable(e);
 			try
 			{
@@ -302,7 +309,7 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 					ghost.dispose();
 					ghost = null;
 				}
-				//Log.warn(ex);
+				// Log.warn(ex);
 			}
 		}
 	}
@@ -369,14 +376,14 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	{
 		switch (actualAction)
 		{
-		case MOVE:
-			return DragSource.DefaultMoveDrop;
-		case COPY:
-			return DragSource.DefaultCopyDrop;
-		case LINK:
-			return DragSource.DefaultLinkDrop;
-		default:
-			return DragSource.DefaultMoveNoDrop;
+			case MOVE:
+				return DragSource.DefaultMoveDrop;
+			case COPY:
+				return DragSource.DefaultCopyDrop;
+			case LINK:
+				return DragSource.DefaultLinkDrop;
+			default:
+				return DragSource.DefaultMoveNoDrop;
 		}
 	}
 
@@ -427,12 +434,6 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 		ev.getDragSourceContext().setCursor(cursor);
 		if (ghost != null)
 		{
-			// Setting the cursor on the drag image helps avoid flicker 
-			// during autoscroll when the cursor changes.  Unfortunately, 
-			// doing so actually introduces flicker on w32 as the cursor is 
-			// dragged near the title bar of a frame, where the cursor spans 
-			// both the title bar and the content.
-			// FIXME for now, live with the lesser flicker
 			ghost.setCursor(cursor);
 		}
 	}
@@ -441,22 +442,22 @@ public abstract class DragHandler implements DragSourceListener, DragSourceMotio
 	{
 		switch (action)
 		{
-		case MOVE:
-			return "MOVE";
-		case MOVE | COPY:
-			return "MOVE|COPY";
-		case MOVE | LINK:
-			return "MOVE|LINK";
-		case MOVE | COPY | LINK:
-			return "MOVE|COPY|LINK";
-		case COPY:
-			return "COPY";
-		case COPY | LINK:
-			return "COPY|LINK";
-		case LINK:
-			return "LINK";
-		default:
-			return "NONE";
+			case MOVE:
+				return "MOVE";
+			case MOVE | COPY:
+				return "MOVE|COPY";
+			case MOVE | LINK:
+				return "MOVE|LINK";
+			case MOVE | COPY | LINK:
+				return "MOVE|COPY|LINK";
+			case COPY:
+				return "COPY";
+			case COPY | LINK:
+				return "COPY|LINK";
+			case LINK:
+				return "LINK";
+			default:
+				return "NONE";
 		}
 	}
 

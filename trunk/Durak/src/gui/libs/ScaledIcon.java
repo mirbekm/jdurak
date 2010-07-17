@@ -12,25 +12,20 @@
  */
 package gui.libs;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 
 /**
  * Provides a scaled version of a given icon. Aspect ratio is optionally preserved; the icon will be centered in any extra space given its size.
  * 
  * @author twall
  */
-// TODO: implement gravity when aspect ratio doesn't match
 public class ScaledIcon implements Icon
 {
 

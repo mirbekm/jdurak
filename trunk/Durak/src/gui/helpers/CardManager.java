@@ -26,7 +26,7 @@ public class CardManager
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			//TODO System.exit with error message!
+			System.err.println("Couldn't load the images.");
 		}
 	}
 
@@ -61,14 +61,14 @@ public class CardManager
 
 		switch (suit)
 		{
-		case Card.CLUBS:
-			return "clubs";
-		case Card.DIAMONDS:
-			return "diams";
-		case Card.HEARTS:
-			return "hearts";
-		case Card.SPADES:
-			return "spades";
+			case Card.CLUBS:
+				return "clubs";
+			case Card.DIAMONDS:
+				return "diams";
+			case Card.HEARTS:
+				return "hearts";
+			case Card.SPADES:
+				return "spades";
 		}
 
 		return "";
@@ -80,14 +80,14 @@ public class CardManager
 
 		switch (suit)
 		{
-		case Card.CLUBS:
-			return "&#9827;";
-		case Card.DIAMONDS:
-			return "&#9830;";
-		case Card.HEARTS:
-			return "&#9829;";
-		case Card.SPADES:
-			return "&#9824;";
+			case Card.CLUBS:
+				return "&#9827;";
+			case Card.DIAMONDS:
+				return "&#9830;";
+			case Card.HEARTS:
+				return "&#9829;";
+			case Card.SPADES:
+				return "&#9824;";
 		}
 
 		return "";
