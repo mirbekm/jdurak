@@ -40,6 +40,11 @@ public class DurakActionListener implements ActionListener
 		this.durakWindow = durakWindow;
 	}
 
+	public Durak getDurak()
+	{
+		return this.durak;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent actionEvent)
 	{
@@ -145,7 +150,7 @@ public class DurakActionListener implements ActionListener
 		}
 
 		this.durakWindow.getDurakPanel().getHandPanel().updateDisplay(table.getPlayers().get(0), this.durak.getTable());
-		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefendedCards(), table.getAttackers());
+		this.durakWindow.getDurakPanel().getTablePanel().updateDisplay(table.getCardsOfAttackerOneOnTable(), table.getCardsOfAttackerTwoOnTable(), table.getDefeatedCards(), table.getAttackers());
 		this.durakWindow.getDurakPanel().getDeckPanel().updateDisplay(table.getDeck(), table.getPlayers(), table.getWinners());
 
 		this.updateButtons();
