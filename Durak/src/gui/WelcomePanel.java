@@ -32,6 +32,7 @@ public class WelcomePanel extends JPanel
 			cmbComputerFour;
 	private JSlider sldNumberOfCards;
 	private JCheckBox chkTransfer;
+	private JCheckBox chkHelp;
 	public static final ImageIcon[] PLAYER_ICONS = { CardManager.getImageIcon("images/icons/user.png"), CardManager.getImageIcon("images/icons/user_green.png"), CardManager.getImageIcon("images/icons/user_orange.png"), CardManager.getImageIcon("images/icons/user_red.png"), CardManager.getImageIcon("images/icons/user_brown.png") };
 
 	public WelcomePanel(DurakActionListener actionListener)
@@ -41,7 +42,7 @@ public class WelcomePanel extends JPanel
 
 		this.setLayout(new GridBagLayout());
 
-		//		this.setBackground(Colors.NORMAL_GREEN);
+		// this.setBackground(Colors.NORMAL_GREEN);
 
 		JLabel lblTitle = new JLabel("JDurak");
 		lblTitle.setFont(new Font("Verdana", Font.BOLD, 66));
@@ -50,7 +51,7 @@ public class WelcomePanel extends JPanel
 
 		JPanel panelPlayers = new JPanel(new GridBagLayout());
 
-		//		panelPlayers.setBackground(Colors.NORMAL_GREEN);
+		// panelPlayers.setBackground(Colors.NORMAL_GREEN);
 
 		TitledBorder panelPlayersBorder = new TitledBorder(new LineBorder(Colors.LIGHT_GREEN, 1), "Players: ");
 		panelPlayersBorder.setTitleFont(new Font("Verdana", Font.BOLD, 14));
@@ -59,29 +60,29 @@ public class WelcomePanel extends JPanel
 		this.txtPlayerOne = new JTextField("Player 1");
 		JLabel playerIcon = new JLabel(WelcomePanel.PLAYER_ICONS[0]);
 
-		this.cmbComputerOne = new JComboBox(new String[] { "Computer 1 - easy", "Computer 1 - normal", "Computer 1 - hard" });
-		//		this.cmbComputerOne.setEnabled(false);
+		this.cmbComputerOne = new JComboBox(new ComputerAi[] { new ComputerAi(AiEnum.EASY, 1), new ComputerAi(AiEnum.NORMAL, 1), new ComputerAi(AiEnum.HARD, 1), new ComputerAi(AiEnum.PABLO, 1) });
+		// this.cmbComputerOne.setEnabled(false);
 		JLabel cmbComputerOneIcon = new JLabel(WelcomePanel.PLAYER_ICONS[1]);
 
-		this.cmbComputerTwo = new JComboBox(new String[] { "Computer 2 - easy", "Computer 2 - normal", "Computer 2 - hard", "no player" });
-		this.cmbComputerTwo.setSelectedIndex(3);
-		//		this.cmbComputerTwo.setEnabled(false);
+		this.cmbComputerTwo = new JComboBox(new ComputerAi[] { new ComputerAi(AiEnum.EASY, 2), new ComputerAi(AiEnum.NORMAL, 2), new ComputerAi(AiEnum.HARD, 2), new ComputerAi(AiEnum.PABLO, 2), new ComputerAi(null, 2) });
+		this.cmbComputerTwo.setSelectedIndex(4);
+		// this.cmbComputerTwo.setEnabled(false);
 		JLabel cmbComputerTwoIcon = new JLabel(WelcomePanel.PLAYER_ICONS[2]);
 
-		this.cmbComputerThree = new JComboBox(new String[] { "Computer 3 - easy", "Computer 3 - normal", "Computer 3 - hard", "no player" });
-		this.cmbComputerThree.setSelectedIndex(3);
-		//		this.cmbComputerThree.setEnabled(false);
+		this.cmbComputerThree = new JComboBox(new ComputerAi[] { new ComputerAi(AiEnum.EASY, 3), new ComputerAi(AiEnum.NORMAL, 3), new ComputerAi(AiEnum.HARD, 3), new ComputerAi(AiEnum.PABLO, 3), new ComputerAi(null, 3) });
+		this.cmbComputerThree.setSelectedIndex(4);
+		// this.cmbComputerThree.setEnabled(false);
 		JLabel cmbComputerThreeIcon = new JLabel(WelcomePanel.PLAYER_ICONS[3]);
 
-		this.cmbComputerFour = new JComboBox(new String[] { "Computer 4 - easy", "Computer 4 - normal", "Computer 4 - hard", "no player" });
-		this.cmbComputerFour.setSelectedIndex(3);
-		//		this.cmbComputerFour.setEnabled(false);
+		this.cmbComputerFour = new JComboBox(new ComputerAi[] { new ComputerAi(AiEnum.EASY, 4), new ComputerAi(AiEnum.NORMAL, 4), new ComputerAi(AiEnum.HARD, 4), new ComputerAi(AiEnum.PABLO, 4), new ComputerAi(null, 4) });
+		this.cmbComputerFour.setSelectedIndex(4);
+		// this.cmbComputerFour.setEnabled(false);
 		JLabel cmbComputerFourIcon = new JLabel(WelcomePanel.PLAYER_ICONS[4]);
 
 		int rowPanelPlayers = 0;
 
 		panelPlayers.add(playerIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
-		panelPlayers.add(this.txtPlayerOne, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 3, 3), 0, 0));
+		panelPlayers.add(this.txtPlayerOne, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
 		panelPlayers.add(cmbComputerOneIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
 		panelPlayers.add(this.cmbComputerOne, new GridBagConstraints(1, rowPanelPlayers++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 3, 3, 3), 0, 0));
 		panelPlayers.add(cmbComputerTwoIcon, new GridBagConstraints(0, rowPanelPlayers, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 3, 3, 3), 0, 0));
@@ -93,13 +94,14 @@ public class WelcomePanel extends JPanel
 
 		JPanel panelRules = new JPanel(new GridBagLayout());
 
-		//		panelRules.setBackground(Colors.NORMAL_GREEN);
+		// panelRules.setBackground(Colors.NORMAL_GREEN);
 
 		TitledBorder panelRulesBorder = new TitledBorder(new LineBorder(Colors.LIGHT_GREEN, 1), "Rules: ");
 		panelRulesBorder.setTitleFont(new Font("Verdana", Font.BOLD, 14));
 		panelRules.setBorder(panelRulesBorder);
 
 		JLabel lblNumberOfCards = new JLabel("Cards: ");
+		lblNumberOfCards.setIcon(CardManager.getImageIcon("images/icons/durak.png"));
 
 		this.sldNumberOfCards = new JSlider(Rules.MIN_AMOUNT_OF_CARDS, Rules.MAX_AMOUNT_OF_CARDS, Rules.MIN_AMOUNT_OF_CARDS);
 		this.sldNumberOfCards.setSnapToTicks(true);
@@ -108,12 +110,20 @@ public class WelcomePanel extends JPanel
 		this.sldNumberOfCards.setPaintLabels(true);
 		this.sldNumberOfCards.setLabelTable(this.sldNumberOfCards.createStandardLabels(4, Rules.MIN_AMOUNT_OF_CARDS));
 
-		this.chkTransfer = new JCheckBox("allow transfer");
+		this.chkTransfer = new JCheckBox("allow to transfer");
 		this.chkTransfer.setEnabled(false);
+		JLabel lblTransfer = new JLabel(CardManager.getImageIcon("images/icons/hand-share.png"));
+		lblTransfer.setEnabled(false);
+
+		this.chkHelp = new JCheckBox("enable visual help");
+		JLabel lblHelp = new JLabel(CardManager.getImageIcon("images/icons/information-white.png"));
 
 		panelRules.add(lblNumberOfCards, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		panelRules.add(this.sldNumberOfCards, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		panelRules.add(this.chkTransfer, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		panelRules.add(this.chkTransfer, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		panelRules.add(lblTransfer, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		panelRules.add(this.chkHelp, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		panelRules.add(lblHelp, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		int rowBackgroundPanel = 0;
 
@@ -121,6 +131,7 @@ public class WelcomePanel extends JPanel
 		btnPlay.setMinimumSize(new Dimension(90, 35));
 		btnPlay.setPreferredSize(new Dimension(90, 35));
 		btnPlay.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnPlay.setIcon(CardManager.getImageIcon("images/icons/tick.png"));
 
 		btnPlay.addActionListener(actionListener);
 		btnPlay.setActionCommand("" + DurakActionListener.ACTION_NEW_GAME);
@@ -146,22 +157,70 @@ public class WelcomePanel extends JPanel
 		return this.sldNumberOfCards.getValue();
 	}
 
-	public List<String> getComputers()
+	public boolean isHelpWanted()
 	{
-		List<String> computers = new ArrayList<String>();
+		return this.chkHelp.isSelected();
+	}
 
-		if (this.cmbComputerOne.getSelectedIndex() != 3)
-			computers.add((String) this.cmbComputerOne.getSelectedItem());
+	public List<ComputerAi> getComputers()
+	{
+		List<ComputerAi> computers = new ArrayList<ComputerAi>();
 
-		if (this.cmbComputerTwo.getSelectedIndex() != 3)
-			computers.add((String) this.cmbComputerTwo.getSelectedItem());
+		if (((ComputerAi) this.cmbComputerOne.getSelectedItem()).getType() != null)
+			computers.add((ComputerAi) this.cmbComputerOne.getSelectedItem());
 
-		if (this.cmbComputerThree.getSelectedIndex() != 3)
-			computers.add((String) this.cmbComputerThree.getSelectedItem());
+		if (((ComputerAi) this.cmbComputerTwo.getSelectedItem()).getType() != null)
+			computers.add((ComputerAi) this.cmbComputerTwo.getSelectedItem());
 
-		if (this.cmbComputerFour.getSelectedIndex() != 3)
-			computers.add((String) this.cmbComputerFour.getSelectedItem());
+		if (((ComputerAi) this.cmbComputerThree.getSelectedItem()).getType() != null)
+			computers.add((ComputerAi) this.cmbComputerThree.getSelectedItem());
+
+		if (((ComputerAi) this.cmbComputerFour.getSelectedItem()).getType() != null)
+			computers.add((ComputerAi) this.cmbComputerFour.getSelectedItem());
 
 		return computers;
+	}
+
+	public class ComputerAi
+	{
+		private AiEnum type;
+		private int number;
+
+		public ComputerAi(AiEnum type, int number)
+		{
+			this.type = type;
+			this.number = number;
+		}
+
+		public AiEnum getType()
+		{
+			return this.type;
+		}
+
+		@Override
+		public String toString()
+		{
+			if (this.type != null)
+				return this.type.getName(this.number);
+
+			return "no player";
+		}
+	}
+
+	public enum AiEnum
+	{
+		EASY("easy"), NORMAL("normal"), HARD("hard"), PABLO("Pablo Ai");
+
+		private String name;
+
+		private AiEnum(String name)
+		{
+			this.name = name;
+		}
+
+		public String getName(int number)
+		{
+			return "Computer " + number + " - " + this.name;
+		}
 	}
 }

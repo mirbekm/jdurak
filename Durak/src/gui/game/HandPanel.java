@@ -3,6 +3,8 @@ package gui.game;
 import game.AbstractPlayer;
 import game.Card;
 import game.CardComparatorSortByNumber;
+import game.Table;
+import game.ai.AbstractAi;
 import gui.helpers.CardManager;
 import gui.listeners.CardDragSourceListener;
 import gui.listeners.DurakMouseListener;
@@ -23,6 +25,7 @@ import javax.swing.event.MouseInputAdapter;
 
 public class HandPanel extends JPanel
 {
+	private static final long serialVersionUID = 1L;
 	public static final int WIDTH = 700;
 	public static final int HEIGHT = 200;
 
@@ -30,6 +33,8 @@ public class HandPanel extends JPanel
 	private HandPanelMouseListener mouseListener;
 	private DurakMouseListener cardMouseListener;
 	private AbstractPlayer player;
+	private boolean isEnabled = false;
+	private Table table;
 
 	public HandPanel(DurakMouseListener cardMouseListener)
 	{
@@ -41,52 +46,91 @@ public class HandPanel extends JPanel
 		this.mouseListener = new HandPanelMouseListener();
 		this.cardMouseListener = cardMouseListener;
 
-		handPane = new JLayeredPane();
-		handPane.setAutoscrolls(true);
+		this.handPane = new JLayeredPane();
+		this.handPane.setAutoscrolls(true);
 
-		this.add(handPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
-		handPane.setVisible(true);
+		this.add(this.handPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
+		this.handPane.setVisible(true);
 	}
 
-	public void updateDisplay(AbstractPlayer player)
+	public void reset()
+	{
+		this.handPane.removeAll();
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled)
+	{
+		this.isEnabled = isEnabled;
+	}
+
+	public void updateDisplay(AbstractPlayer player, Table table)
 	{
 		this.handPane.removeAll();
 
 		this.player = player;
+		this.table = table;
 
-		ArrayList<Card> cards = player.getHand();
-
-		int panelWidth = (this.getWidth() == 0) ? WIDTH : this.getWidth();
-
-		if (this.cardMouseListener.getDurakActionListener().getDurakWindow().getDurakPanel().getTurnPanel().sortBySuit())
-			Collections.sort(cards);
-		else
-			Collections.sort(cards, new CardComparatorSortByNumber());
-
-		int counter = 0;
-		int xOffset = 17;
-
-		if ((panelWidth - 10) / CardManager.CARD_WIDTH >= cards.size())
-			xOffset = CardManager.CARD_WIDTH + 2;
-		else
-			xOffset = ((panelWidth - 12) - (CardManager.CARD_WIDTH + 1)) / (cards.size() - 1);
-
-		for (Card card : cards)
+		if (!(player instanceof AbstractAi))
 		{
-			GuiCard guiCard = new GuiCard(card);
-			guiCard.setBounds((counter++) * (xOffset), 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
-			guiCard.addMouseListener(this.mouseListener);
+			ArrayList<Card> cards = player.getHand();
 
-			if (player.isAttacker())
-				guiCard.addMouseListener(this.cardMouseListener);
+			int panelWidth = (this.getWidth() == 0) ? WIDTH : this.getWidth();
 
-			if (player.isAttacker() || player.isDefender())
-				new CardDragSourceListener(guiCard);
+			if (this.cardMouseListener.getDurakActionListener().getDurakWindow().getDurakPanel().getTurnPanel().sortBySuit())
+				Collections.sort(cards);
+			else
+				Collections.sort(cards, new CardComparatorSortByNumber());
 
-			this.handPane.add(guiCard, 0);
+			int counter = 0;
+			int xOffset = 17;
+
+			if ((panelWidth - 10) / CardManager.CARD_WIDTH >= cards.size())
+				xOffset = CardManager.CARD_WIDTH + 2;
+			else
+				xOffset = ((panelWidth - 12) - (CardManager.CARD_WIDTH + 1)) / (cards.size() - 1);
+
+			for (Card card : cards)
+			{
+				GuiCard guiCard = new GuiCard(card);
+				guiCard.setBounds((counter++) * (xOffset), 0, CardManager.CARD_WIDTH, CardManager.CARD_HEIGHT);
+
+				boolean isCardEnabled = this.isEnabled;
+
+				if (isCardEnabled && this.table.getRules().doHelp())
+				{
+					if (player.isAttacker() && !table.canAttackWithThisCard(card))
+						isCardEnabled = false;
+					else if (player.isDefender())
+					{
+						boolean cardEnabled = false;
+
+						for (Card cardToBeDefeated : table.getCardsOfAttackerOneOnTable())
+							cardEnabled |= table.canDefendWithCard(card, cardToBeDefeated);
+
+						if (table.getCardsOfAttackerTwoOnTable() != null)
+							for (Card cardToBeDefeated : table.getCardsOfAttackerTwoOnTable())
+								cardEnabled |= table.canDefendWithCard(card, cardToBeDefeated);
+
+						isCardEnabled = cardEnabled;
+					}
+				}
+
+				if (isCardEnabled)
+					guiCard.addMouseListener(this.mouseListener);
+				guiCard.setEnabled(isCardEnabled);
+
+				if (player.isAttacker() && isCardEnabled)
+					guiCard.addMouseListener(this.cardMouseListener);
+
+				if (player.isAttacker() || player.isDefender() && isCardEnabled)
+					new CardDragSourceListener(guiCard);
+
+				this.handPane.add(guiCard, 0);
+			}
+
+			this.repaint(0, 0, this.getWidth(), this.getHeight());
 		}
-
-		this.repaint(0, 0, this.getWidth(), this.getHeight());
 	}
 
 	public void repaint()
@@ -98,7 +142,7 @@ public class HandPanel extends JPanel
 	public void updateDisplay()
 	{
 		if (this.player != null)
-			this.updateDisplay(this.player);
+			this.updateDisplay(this.player, this.table);
 	}
 
 	public void removeCard(GuiCard card)
