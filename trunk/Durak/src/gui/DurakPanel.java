@@ -6,8 +6,9 @@ import gui.game.HandPanel;
 import gui.game.TablePanel;
 import gui.game.TurnPanel;
 import gui.helpers.Colors;
+import gui.listeners.AttackMouseListener;
+import gui.listeners.DefendMouseListener;
 import gui.listeners.DurakActionListener;
-import gui.listeners.DurakMouseListener;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -25,7 +26,8 @@ public class DurakPanel extends JPanel
 	private HandPanel handPanel;
 	private TablePanel tablePanel;
 	private TurnPanel turnPanel;
-	private DurakMouseListener durakMouseListener;
+	private AttackMouseListener attackMouseListener;
+	private DefendMouseListener defendMouseListener;
 
 	public DurakPanel(DurakActionListener actionListener)
 	{
@@ -34,10 +36,11 @@ public class DurakPanel extends JPanel
 
 		this.setLayout(new GridBagLayout());
 
-		this.durakMouseListener = new DurakMouseListener(actionListener);
+		this.attackMouseListener = new AttackMouseListener(actionListener);
+		this.defendMouseListener = new DefendMouseListener(actionListener.getDurak(), actionListener);
 
 		this.deckPanel = new DeckPanel();
-		this.handPanel = new HandPanel(this.durakMouseListener);
+		this.handPanel = new HandPanel(this.attackMouseListener, this.defendMouseListener);
 		this.tablePanel = new TablePanel(actionListener);
 		this.turnPanel = new TurnPanel(actionListener);
 

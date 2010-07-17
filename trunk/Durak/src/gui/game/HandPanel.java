@@ -6,8 +6,9 @@ import game.CardComparatorSortByNumber;
 import game.Table;
 import game.ai.AbstractAi;
 import gui.helpers.CardManager;
+import gui.listeners.AttackMouseListener;
 import gui.listeners.CardDragSourceListener;
-import gui.listeners.DurakMouseListener;
+import gui.listeners.DefendMouseListener;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,12 +32,14 @@ public class HandPanel extends JPanel
 
 	private JLayeredPane handPane;
 	private HandPanelMouseListener mouseListener;
-	private DurakMouseListener cardMouseListener;
+	private AttackMouseListener attackMouseListener;
+	private DefendMouseListener defendMouseListener;
+
 	private AbstractPlayer player;
 	private boolean isEnabled = false;
 	private Table table;
 
-	public HandPanel(DurakMouseListener cardMouseListener)
+	public HandPanel(AttackMouseListener cardMouseListener, DefendMouseListener defendMouseListener)
 	{
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -44,7 +47,8 @@ public class HandPanel extends JPanel
 
 		this.setLayout(new GridBagLayout());
 		this.mouseListener = new HandPanelMouseListener();
-		this.cardMouseListener = cardMouseListener;
+		this.attackMouseListener = cardMouseListener;
+		this.defendMouseListener = defendMouseListener;
 
 		this.handPane = new JLayeredPane();
 		this.handPane.setAutoscrolls(true);
@@ -77,7 +81,7 @@ public class HandPanel extends JPanel
 
 			int panelWidth = (this.getWidth() == 0) ? WIDTH : this.getWidth();
 
-			if (this.cardMouseListener.getDurakActionListener().getDurakWindow().getDurakPanel().getTurnPanel().sortBySuit())
+			if (this.attackMouseListener.getDurakActionListener().getDurakWindow().getDurakPanel().getTurnPanel().sortBySuit())
 				Collections.sort(cards);
 			else
 				Collections.sort(cards, new CardComparatorSortByNumber());
@@ -121,7 +125,10 @@ public class HandPanel extends JPanel
 				guiCard.setEnabled(isCardEnabled);
 
 				if (player.isAttacker() && isCardEnabled)
-					guiCard.addMouseListener(this.cardMouseListener);
+					guiCard.addMouseListener(this.attackMouseListener);
+
+				if (player.isDefender() && isCardEnabled)
+					guiCard.addMouseListener(this.defendMouseListener);
 
 				if (player.isAttacker() || player.isDefender() && isCardEnabled)
 					new CardDragSourceListener(guiCard);

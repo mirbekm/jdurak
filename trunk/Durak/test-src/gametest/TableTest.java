@@ -46,7 +46,7 @@ public class TableTest
 	{
 		assertTrue(this.table.getCardsOfAttackerOneOnTable().isEmpty());
 		assertNull(this.table.getCardsOfAttackerTwoOnTable());
-		assertTrue(this.table.getDefendedCards().isEmpty());
+		assertTrue(this.table.getDefeatedCards().isEmpty());
 		assertTrue(this.table.getNotYetDefeatedCards().isEmpty());
 		assertTrue(this.table.getNumbersOnTable().isEmpty());
 	}
@@ -136,9 +136,9 @@ public class TableTest
 
 		assertEquals(0, this.table.getNotYetDefeatedCards().size());
 
-		assertEquals(defendCardOne, this.table.getDefendedCards().get(attackCardOne));
-		assertEquals(defendCardTwo, this.table.getDefendedCards().get(attackCardTwo));
-		assertEquals(defendCardFive, this.table.getDefendedCards().get(attackCardThree));
+		assertEquals(defendCardOne, this.table.getDefeatedCards().get(attackCardOne));
+		assertEquals(defendCardTwo, this.table.getDefeatedCards().get(attackCardTwo));
+		assertEquals(defendCardFive, this.table.getDefeatedCards().get(attackCardThree));
 	}
 
 	@Test

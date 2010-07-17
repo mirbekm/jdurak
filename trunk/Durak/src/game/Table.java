@@ -27,8 +27,9 @@ public class Table
 	private ArrayList<Card> cardsOfAttackerOneOnTable;
 	private ArrayList<Card> cardsOfAttackerTwoOnTable;
 	private ArrayList<Card> cardsOfDefender;
-	private HashMap<Card, Card> defendedCards;
+	private HashMap<Card, Card> defeatedCards;
 	private HashSet<Integer> numbersOnTable;
+	private GameHistory gameHistory;
 
 	/**
 	 * Create a new table
@@ -55,6 +56,7 @@ public class Table
 	{
 		this.attackers = new ArrayList<AbstractPlayer>();
 		this.winners = new ArrayList<AbstractPlayer>();
+		this.gameHistory = new GameHistory();
 
 		this.deck = new Deck(this.durak.getRules().getNumberOfCardsPerSuit());
 
@@ -110,7 +112,7 @@ public class Table
 		this.cardsOfAttackerOneOnTable = new ArrayList<Card>();
 		this.cardsOfAttackerTwoOnTable = new ArrayList<Card>();
 		this.cardsOfDefender = new ArrayList<Card>();
-		this.defendedCards = new HashMap<Card, Card>();
+		this.defeatedCards = new HashMap<Card, Card>();
 		this.numbersOnTable = new HashSet<Integer>();
 	}
 
@@ -139,9 +141,9 @@ public class Table
 	 * 
 	 * @return the list of defended cards with its defenders
 	 */
-	public Map<Card, Card> getDefendedCards()
+	public Map<Card, Card> getDefeatedCards()
 	{
-		return Collections.unmodifiableMap(this.defendedCards);
+		return Collections.unmodifiableMap(this.defeatedCards);
 	}
 
 	/**
@@ -156,14 +158,14 @@ public class Table
 	{
 		assert (cardToBeDefeated != null & cardDefendingWith != null);
 
-		if (!this.defendedCards.containsKey(cardToBeDefeated))
+		if (!this.defeatedCards.containsKey(cardToBeDefeated))
 		{
 			if (cardDefendingWith.isGreaterThan(cardToBeDefeated))
 			{
 				this.defender.getHand().remove(cardDefendingWith);
 				this.numbersOnTable.add(cardDefendingWith.getNumber());
 				this.cardsOfDefender.add(cardDefendingWith);
-				this.defendedCards.put(cardToBeDefeated, cardDefendingWith);
+				this.defeatedCards.put(cardToBeDefeated, cardDefendingWith);
 			}
 			else
 			{
@@ -243,7 +245,7 @@ public class Table
 		assert (defendingCard != null);
 		assert (cardToBeDefeated != null);
 
-		return defendingCard.isGreaterThan(cardToBeDefeated) && !this.defendedCards.containsKey(cardToBeDefeated);
+		return defendingCard.isGreaterThan(cardToBeDefeated) && !this.defeatedCards.containsKey(cardToBeDefeated);
 	}
 
 	private AbstractPlayer ownerOfAttackingCard(Card card)
@@ -296,11 +298,21 @@ public class Table
 	}
 
 	/**
+	 * Return the game history.
+	 * 
+	 * @return The game history
+	 */
+	public GameHistory getGameHistory()
+	{
+		return this.gameHistory;
+	}
+
+	/**
 	 * End a turn.
 	 */
 	public void endTurn()
 	{
-		boolean defenderHasWon = this.defendedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size();
+		boolean defenderHasWon = this.defeatedCards.size() == this.cardsOfAttackerOneOnTable.size() + this.cardsOfAttackerTwoOnTable.size();
 
 		for (AbstractPlayer player : this.players)
 		{
@@ -314,6 +326,15 @@ public class Table
 			this.defender.getHand().addAll(this.cardsOfDefender);
 			this.defender.getHand().addAll(this.cardsOfAttackerOneOnTable);
 			this.defender.getHand().addAll(this.cardsOfAttackerTwoOnTable);
+
+			this.gameHistory.addCardsToPlayer(this.cardsOfDefender, this.defender);
+			this.gameHistory.addCardsToPlayer(this.cardsOfAttackerOneOnTable, this.defender);
+			this.gameHistory.addCardsToPlayer(this.cardsOfAttackerTwoOnTable, this.defender);
+		}
+		else
+		{
+			this.gameHistory.addDefeatedCards(this.defeatedCards.values());
+			this.gameHistory.addDefeatedCards(this.defeatedCards.keySet());
 		}
 
 		for (AbstractPlayer player : this.attackers)
@@ -335,6 +356,7 @@ public class Table
 		// Choose the next players
 		int indexOfOldDefender = this.players.indexOf(this.defender);
 
+		// FIXME on draw there is a division by zero exception
 		if (defenderHasWon)
 			this.defender = this.players.get((indexOfOldDefender + 1) % this.players.size());
 		else
@@ -362,12 +384,12 @@ public class Table
 		ArrayList<Card> notYetDefendedCards = new ArrayList<Card>();
 
 		for (Card card : this.cardsOfAttackerOneOnTable)
-			if (!defendedCards.containsKey(card))
+			if (!defeatedCards.containsKey(card))
 				notYetDefendedCards.add(card);
 
 		if (!this.cardsOfAttackerTwoOnTable.isEmpty())
 			for (Card card : this.cardsOfAttackerTwoOnTable)
-				if (!defendedCards.containsKey(card))
+				if (!defeatedCards.containsKey(card))
 					notYetDefendedCards.add(card);
 
 		return Collections.unmodifiableList(notYetDefendedCards);

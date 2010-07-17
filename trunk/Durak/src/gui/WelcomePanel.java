@@ -116,6 +116,7 @@ public class WelcomePanel extends JPanel
 		lblTransfer.setEnabled(false);
 
 		this.chkHelp = new JCheckBox("enable visual help");
+		this.chkHelp.setSelected(true);
 		JLabel lblHelp = new JLabel(CardManager.getImageIcon("images/icons/information-white.png"));
 
 		panelRules.add(lblNumberOfCards, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

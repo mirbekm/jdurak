@@ -6,11 +6,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.event.MouseInputAdapter;
 
-public class DurakMouseListener extends MouseInputAdapter
+public class AttackMouseListener extends MouseInputAdapter
 {
 	private DurakActionListener actionListener;
 
-	public DurakMouseListener(DurakActionListener actionListener)
+	public AttackMouseListener(DurakActionListener actionListener)
 	{
 		this.actionListener = actionListener;
 	}
